@@ -1,6 +1,6 @@
 # DockerSupportから生成されるDockerfileのImage Tag名を確認していく。
 ## 前提条件
-今回はubuntu 20用にセットアップしたい。
+今回はUbuntu 20用にセットアップしたい。
 
 ## DockerSupportから生成されるDockerfile(吊るし状態)
 ```
@@ -33,13 +33,13 @@ ENTRYPOINT ["dotnet", "WebApplicationTest.dll"]
 ```
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS base
 ```
-上記だとDebian 10 なので、ubuntu 20に設定したい。
+上記だとDebian 10 なので、Ubuntu 20に設定したい。
 
 <b>〇 .NET SDK</b>
 ```
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 ```
-上記だとDebian 10 なので、ubuntu 20に設定したい。
+上記だとDebian 10 なので、Ubuntu 20に設定したい。
 
 ## Image Tagの確認
 ### ASP NET Core Runtime(実行環境用)
