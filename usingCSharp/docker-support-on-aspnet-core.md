@@ -42,9 +42,19 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 上記だとDebian 10 なので、ubuntu 20に設定したい。
 
 ## Image Tagの確認
-### ASP.NET Core Runtime(実行環境用)
+### ASP NET Core Runtime(実行環境用)
 [https://hub.docker.com/_/microsoft-dotnet-aspnet/]
 
 ### .NET SDK（build環境用）
 [https://hub.docker.com/_/microsoft-dotnet-sdk/]
 
+
+## ASP NET Core RuntimeのImage Tagの指定を書き換える(5.0.3-focal)
+```
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.3-focal AS base
+```
+
+## .NET SDKのImage Tagの指定を書き換える(5.0.103-focal)
+```
+FROM mcr.microsoft.com/dotnet/sdk:5.0.103-focal AS build
+```
