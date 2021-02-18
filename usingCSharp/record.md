@@ -9,7 +9,7 @@ SharpLab等でC#の展開を見るとわかるが、```IEquatable<T>```を実装
 値ベースの等値性が使用される仕様。
 [[https://docs.microsoft.com/ja-jp/dotnet/csharp/tutorials/exploration/records#characteristics-of-records]]
 
-## Immutable
+## Default Immutable
 
 ### classを定義する場合
 
@@ -36,4 +36,8 @@ public record Hoge(string Fuga, string Piyo) {
 }
 ```
 
-```record```の定義の後ろにPropsの定義をすれば、constructorと get＆init setterのPropsとして展開される。
+```record```の定義の後ろにPropsの定義をすれば、```ctor```と ```get; init;``` の```Props```として展開される。
+
+```record```は既定の定義だと変更が不可。（```get; init;```）
+
+ただし、通常のclassと同じく、```ctor```を書いて、```Props```を定義することは可能なので、```get; set;```の```Props```を定義すれば変更は許可される。
