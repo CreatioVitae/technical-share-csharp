@@ -105,11 +105,11 @@ public record Hoge(string Fuga, string Piyo) {
 
 ### Memberwise Equalのため、↓の場合、trueが出力される。
 ```
-var class1 = new Hoge("fuga", "piyo");
-var class2 = new Hoge("fuga", "piyo");
+var record1 = new Hoge("fuga", "piyo");
+var record2 = new Hoge("fuga", "piyo");
 
-//Reference Equal
-Console.WriteLine(class1.Equals(class2));　
+//Memberwise Equal
+Console.WriteLine(record1.Equals(record2));　
 ```
 
 ## Primary ctorを介さないProps
