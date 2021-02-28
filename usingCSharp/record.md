@@ -1,6 +1,6 @@
-# Using Record
+# Using record
 
-## How to Record
+## How to record
 C#9で追加された新しい参照型。
 
 SharpLab等でC#の展開を見るとわかるが、```IEquatable<T>```を実装した```class```になる。
