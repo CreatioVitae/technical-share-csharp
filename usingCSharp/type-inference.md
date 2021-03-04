@@ -26,3 +26,24 @@ switch式は左辺を見て型推論を行う。
 
 ## Target Typed New
 Target Typed Newは左辺を見て型推論を行う。
+
+### Hoge recordを定義した場合
+```
+public record Hoge(string Fuga, string Piyo) {
+}
+```
+
+### ```new ()``` でインスタンス生成が可能（```Hoge```を返却することが自明であるため左辺を見ての推論が可能。）
+```
+public static Hoge GetHoge() =>
+    new ("fuga", "piyo");
+```
+
+### メソッド呼び出しの際にも引き渡す型が自明な場合、推論が可能。
+```　
+public static bool InspectAboutHoge(Hoge hoge) =>
+    true;
+
+public static bool InspectAboutHoge() =>
+    InspectAboutHoge(new ("fuga", "piyo"));
+```
