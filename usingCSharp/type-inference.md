@@ -44,6 +44,6 @@ public static Hoge GetHoge() =>
 public static bool InspectAboutHoge(Hoge hoge) =>
     true;
 
-public static bool InspectAboutHoge() =>
+public static bool InspectAboutHogeTest() =>
     InspectAboutHoge(new ("fuga", "piyo"));
 ```
