@@ -13,7 +13,7 @@ https://docs.microsoft.com/ja-jp/dotnet/csharp/nullable-references
 これによって、防御的プログラミングにありがちな過剰なNullチェックから解放され、Nullabilityに関して、契約プログラミングが可能になった。
 
 ```
-public bool Vaidate(Hoge hoge){
+public bool Vaidate(Hoge hoge) {
     // hoge はnullable
     if(hoge is null){
         return false;
@@ -53,9 +53,21 @@ Project単位で有効化したい場合、SDKスタイルのcsprojに書き直�
 
 
 ## null許容参照型の?と、null許容値型の?の違いについて
-null許容値型と違い、属性で表現された型になる。ため、例えば```string```と、```string?```は本質的には同じ型になる。
+null許容値型と違い、属性で表現(後述)された型になる。ため、例えば```string```と、```string?```は本質的には同じ型になる。
 
 逆にnull許容値型の例えば```int?```は、```nullable<int>```なので```int```とは別の型になる。
+
+### 属性での表現 について
+https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABAZi1ICYsBhLAb2K1astIBYsBZAClIBGAAwB+LAAsA9gHMMAGioisAMzgzkioWKwAHAJYBPKQEomLNgF9iloA===
+
+* ```NullableContext```
+* ```Nullable```
+
+でそれぞれ表現される。
+
+```NullableContext``` で ```class / method``` に全体適用しつつ、```Nullable``` でオーバーライドする仕組み。
+
+属性の引数は右記の通り。 ```[ 0:oblivious, 1:non null, 2:nullable ]``` 
 
 ## フロー解析(flow analysis)
 コードのフローを追跡し、利用箇所より前の時点で代入や検査が行われるかをコンパイラーが調べる仕組み。
