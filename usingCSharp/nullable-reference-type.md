@@ -69,6 +69,8 @@ https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABAZi1ICYsBhLAb2K1ast
 
 属性の引数は右記の通り。 ```[ 0:oblivious, 1:non null, 2:nullable ]``` 
 
+実際にはbuild時に展開される
+
 ## フロー解析(flow analysis)
 コードのフローを追跡し、利用箇所より前の時点で代入や検査が行われるかをコンパイラーが調べる仕組み。
 
