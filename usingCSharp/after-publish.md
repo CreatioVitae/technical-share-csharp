@@ -38,7 +38,6 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     </Exec>
   </Target>
 
-
   <Target Name="DeployToProduction" Condition="'$(Environment)' == 'Production'" AfterTargets="AfterPublish">
     <Exec WorkingDirectory="Deploy" Command="prod.bat" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
