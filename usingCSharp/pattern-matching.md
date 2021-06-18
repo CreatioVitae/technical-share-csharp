@@ -1,4 +1,4 @@
-# using Pattern Matchng
+# using Pattern Matching
 
 ## 今回のコードサンプル On SharpLab
 https://sharplab.io/#v2:CYLg1APgAgTAjAWAFBQAwAIpwCwG5lqZwB0AMgJYB2AjvkgMSUCuANiwIYBGLApuj5S68CAZiIA2TDHQBhdAG9k6ZZjFZJFAM4AXADwAVAHzoAgpq16jACm0ALcpqIiDxzQHsmAJwDGPAJToALyGSiph7l6+6A7oFi7oLA7a6AD8CUnoIOgRPjzE+m4WVn50ocpQanCSVMlmAJKU2lZunABWPN7aaTm+AcFlYehWPXwxNdEBaeSZ6AC0cHSDKgMV/MwAtugA4p7swHyKSEvKAMoANANhJhdHxwBCN8eyj8cAIi9LAFoDAL4DK5VJDs9nwtjxtMD9ncAJ4ARSY7ES2mhVnG1ARSOhAUOT3IADMhujEeRkehdOg4KhsZdjlAAOzbXb7YivRbHP63JY8FiaUYEqxEzHRRyGQIUjDsSjAMniqkKGlLemMkHEGRspYcp7c3nRfmCknQ4XoUWy9CS6XkgCsqDlOKeKiVkLyd3Vg01x21fMJGINRpN1olUplMBttoVg0dTLyJldYXdXJ5XoFPtJMRNIZt1M59sjKpOsZU8cGnvl2aeueZnwLyiLReQAHp62FVuplfttuCnTD4cTkXBUY10PrkVnG+WGcPDZoAO4k7y2Utj+3KcmUoLGJ0sm5L5cmtfmmWUjDBNt5GTbpvL41io9moNWm3r0/EB4Ny+7sUBu8W9AZ48bqNiGuN8r2vX9QyfTdzhAq8AH1IMA74kB3N06BQn50GQAEJEwbB0AAOTcbQAAV2G0bQeE8ShmjaDounQFpWj8O0lnxGjWiNSgiKIDAuMofDWBYE5tE8KgAHNmPDZs6WrdAizCGDWLxKxbDcMTRkceQML4gS2Ek5D30GRtFLdcNwywABOKwdME4TRMoMSyAEMS7BKX5/mzFsqlPDttDudheSdKwB3oyczmiRo0l2USR3QbxdjxEj2F2dYsyeGc5wXKx4vYRLSJStKr28AK+GswTwuYPSsjsTw3GndBKB4eqTE8MSmHWARtAAeSYbq8QAJUldSAFEAA9fAAB20cg3Gotyy2OYqdTKthwtgvwsiklQltK2CKsEjbMAZTcqy25QdqGcYbLYWFwqu2bdJYfrDsdTso27FMUWulhYXQMAGoewTntk2tkA5UR0E8Do3E8aUAAk1J4KwsFQNIADEmDE9hwpRtJiPIaE3EK5Qob2WaWENFH0GG9YpuhAA1REmD4MUUeIGm6dKTzKgwEwADd2HIDhuB4BH1PXcM7BiDLtHnUtQORyk1oCadbAEdAMaxzjuMqlgn017GzqGPaeJVtXKHQfHCe15JdafK23A+e14JPDnkUZlhmfDH5ZOwqn+cF4XeDFnhiNqibNFI8jKIt/oFuUKXHBluWWPteQNcx9gsi423BLk/XM6dp504d7OdbzjCTwdovjhd4w3YZpmeG9uhwZQNRpBDk5KL58hfAAWTcfY9cONuW2kA35YdMQrE4Nw3D1qHNFYbRwq7nu+54Qfh7SdgBaFoQt6H7kAg98hgDIngTClMFtADg+Re37liinxUGSsJeV5APFEV5cK98DofJ+LAQC63mnGDyzY1B4RDi/VOYQxyvGhpQHQngmCdBmhbJB3gOC7GmrNcMAtPBDE/iwVeZp95ByPsPPo6Az4XwotfYAt975UOAcUX28d0CIOQag9B+CLZmE0OQMSlAOqNHDB/Hgy8yH/0oUA4+LBaH0Mvkwlh8jH6KI4WZLhVgTYAIfrwYByjiQMKvjfcErCFHD20dmOsSAfhAA==
@@ -8,7 +8,6 @@ is 演算子とswitchの基礎を理解していること
 
 ## is 演算子での宣言パターン
 ```hoge is T fuga``` と書くことで型の判定＆キャスト＆宣言が可能。
-
 
 ```cs
 #nullable enable
@@ -54,6 +53,7 @@ public static int AsInt(object source)
 ```
 
 にコンパイラ生成される。
+コンパイラ生成を見てもらえばわかるが、明示的な型宣言パターンで生成された場合、
 
 ## switchでの比較パターン With 破棄パターンと網羅性検査
 ```cs
@@ -100,11 +100,11 @@ public static Grade GetGradeByQuality(int quality) {
 
 if文での記述の場合、Build Errorにはならない。
 
-その一方で、大小比較パターンにコンバートした場合、上記コードはbuild Errorになる。
+その一方で、大小比較パターンにコンバートした場合、上記コードはBuild Errorになる。
 
 上記の式だと、５行までの条件で、intの範囲を網羅していることをRoslynが検査してくれる。
 
-そのため、上記式だとbuild Errorになる。
+そのため、上記式だと破棄パターンの行が網羅性検査がNGのため、Build Errorになる。
 
 逆に、範囲が網羅されていない場合にも警告が出る。
 
@@ -128,7 +128,7 @@ public class Fuga {
 
 ## Appendix:using Deconstructions
 ```Deconstructions```は、パターンベースでの実装が基本になっているため、```Deconstruct```が所定のルールで実装されていれば利用可能。
-尚、```ValueTuple```は```Deconstruct```を実装していないが、特別扱いで```Deconstructions```が可能となっている。
+尚、```ValueTuple```は```Deconstruct```を実装していないが、特別扱いで```Deconstruction```が可能となっている。
 
 ### ```Deconstructions```が```ValueTuple```でサポートされている経緯と使いどころ
 ValueTupleはオブジェクトを定義したくないけどメンバーは定義したい場合に利用する。
@@ -158,9 +158,11 @@ public class Fuga {
 }
 ```
 
-### System.Tupleに対するDeconstruction
+### Deconstructions For System.Tuple
 ```System.Tuple```に対しては```Deconstruct```拡張メソッドが用意されている。[ https://docs.microsoft.com/ja-jp/dotnet/api/system.tupleextensions.deconstruct?view=net-5.0 ]
-が、```System.Tuple```は基本非推奨なので、
+
+### Deconstructions For class
+自分で```Deconstruct```methodを書くか、拡張メソッドをはやす必要がある。
 
 ## using not With 宣言パターン
 ```cs
@@ -195,6 +197,8 @@ public record Hoge(string? Fuga, string? Piyo) {
 ```
 
 ## タプルswitch
+switch ステートメントにてTupleでの分岐が可能になっている。
+
 ```cs
 public static Grade GetBaseGrade((int? quality, int? rarity) craftParam) {
     switch (craftParam) {
@@ -222,7 +226,11 @@ public string AvailableHogePropsPattern =>
 
 ## プロパティパターンを使っての型switch
 ```cs
-if(hoge is {} nonNull){
+if(hoge is {} nonNullValue){
     //
 }
 ```
+上記例は、
+```hoge```がNull許容値型の場合、nonNullな値型へのキャストが行われ、```nonNullValue```にはnonNullな値型が入る。
+
+```hoge```がNull許容参照型の場合、フロー解析上```nonNullValue```は、```nonNullな参照型```であることを知らせることができるが、型定義としては```T```ではなく```T?```が入る。
