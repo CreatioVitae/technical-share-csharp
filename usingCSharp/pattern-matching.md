@@ -6,7 +6,7 @@ https://sharplab.io/#v2:CYLg1APgAgTAjAWAFBQAwAIpwCwG5lqZwB0AMgJYB2AjvkgMSUCuANiw
 ## 前提条件
 is 演算子とswitchの基礎を理解していること
 
-## is 演算子での宣言パターン
+## is 演算子での宣言パターン(C#7～)
 ```hoge is T fuga``` と書くことで型の判定＆キャスト＆宣言が可能。
 
 ```cs
@@ -53,9 +53,10 @@ public static int AsInt(object source)
 ```
 
 にコンパイラ生成される。
-コンパイラ生成を見てもらえばわかるが、明示的な型宣言パターンで生成された場合、
 
-## switchでの比較パターン With 破棄パターンと網羅性検査
+コンパイラ生成を見てもらえばわかるが、宣言パターンで宣言された変数はnonNullであることが保証される。
+
+## switchでの比較パターン With 破棄パターンと網羅性検査(C#9～)
 ```cs
 public static Grade GetGradeByQuality(int quality) {
     if (quality < 10) {
@@ -164,7 +165,7 @@ public class Fuga {
 ### Deconstructions For class
 自分で```Deconstruct```methodを書くか、拡張メソッドをはやす必要がある。
 
-## using not With 宣言パターン
+## using not パターン With 宣言パターン（(C#9～)）
 ```cs
 public static void NotPattern(object? obj) {
     if(obj is not string nonNullString){
@@ -181,7 +182,7 @@ else 以降で```assigned```となる。
 
 ただし、```switch```では利用できないため注意すること。
 
-## Switch式での位置パターン With 破棄パターン
+## Switch式での位置パターン With 破棄パターン(C#8~)
 ```cs
 #nullable enable
 public record Hoge(string? Fuga, string? Piyo) {
@@ -196,7 +197,7 @@ public record Hoge(string? Fuga, string? Piyo) {
 }
 ```
 
-## タプルswitch
+## タプルswitch(C#8~)
 switch ステートメントにてTupleでの分岐が可能になっている。
 
 ```cs
@@ -209,7 +210,7 @@ public static Grade GetBaseGrade((int? quality, int? rarity) craftParam) {
     }
 }
 ```
-## プロパティパターン
+## プロパティパターン(C#8~)
 ```cs
 #nullable enable
 public record Hoge(string? Fuga, string? Piyo) {
@@ -224,7 +225,7 @@ public string AvailableHogePropsPattern =>
 ```
 分解が出来ない場合はプロパティパターンを利用する。
 
-## プロパティパターンを使っての型switch
+## プロパティパターンを使っての型switch(C#8~)
 ```cs
 if(hoge is {} nonNullValue){
     //
