@@ -27,7 +27,7 @@ public static List<T> AsList<[System.Runtime.CompilerServices.Nullable(2)] T>(IE
 
 ```cs
 #nullable enable
-public static int AsInt(object source) =>
+public static int AsInt(object? source) =>
     (source is int i) ? i : -1;
 ```
 
@@ -105,9 +105,63 @@ if文での記述の場合、Build Errorにはならない。
 
 逆に、範囲が網羅されていない場合にも警告が出る。
 
-## using not and 宣言 Pattern
+## Appendix:using ValueTuple
+オブジェクトを定義したくないけれど、メンバーは定義したい場合に利用する。
+
 ```cs
-public static void NotPattern(object obj) {
+public class HogeServiceModel {
+}
+
+public class Fuga {
+    public (bool result, HogeServiceModel? availableModel) ValidateAndGetAvailableModel() {
+        return (result:false, availableModel:null);
+    }
+}
+```
+
+のように記述が可能。
+
+```ValidateResult``` のようなオブジェクトを定義する必要がなくなる。
+
+## Appendix:using Deconstructions
+```Deconstructions```は、パターンベースでの実装が基本になっているため、```Deconstruct```が所定のルールで実装されていれば利用可能。
+尚、```ValueTuple```は```Deconstruct```を実装していないが、特別扱いで```Deconstructions```が可能となっている。
+
+### ```Deconstructions```が```ValueTuple```でサポートされている経緯と使いどころ
+ValueTupleはオブジェクトを定義したくないけどメンバーは定義したい場合に利用する。
+この根本は、「束ねる役割を持つオブジェクトの命名を省きたい。」という欲求がある。
+そのため、返却されたValueTupleをオブジェクトで受けるのではなく、各値に分解して、宣言、及び代入を行うことができる。
+また、分解不要な値については、破棄パターンで破棄可能。
+
+```cs
+public class HogeServiceModel {
+}
+
+public class Fuga {
+    public (bool result, HogeServiceModel? availableModel) ValidateAndGetAvailableModel() {
+        return (result:false, availableModel:null);
+    }
+    
+    public void Hoge() {
+        // Deconstruction Declaration
+        var (result, availableModel) = ValidateAndGetAvailableModel();
+
+        // Deconstruction Assignment
+        (result, availableModel) = ValidateAndGetAvailableModel();
+
+        (_, availableModel) = ValidateAndGetAvailableModel();
+    }
+    
+}
+```
+
+### System.Tupleに対するDeconstruction
+```System.Tuple```に対しては```Deconstruct```拡張メソッドが用意されている。[ https://docs.microsoft.com/ja-jp/dotnet/api/system.tupleextensions.deconstruct?view=net-5.0 ]
+が、```System.Tuple```は基本非推奨なので、
+
+## using not With 宣言パターン
+```cs
+public static void NotPattern(object? obj) {
     if(obj is not string nonNullString){
         return;
     }
@@ -121,9 +175,6 @@ public static void NotPattern(object obj) {
 else 以降で```assigned```となる。
 
 ただし、```switch```では利用できないため注意すること。
-
-## Appendix:分解について
-
 
 ## Switch式での位置パターン With 破棄パターン
 ```cs
@@ -151,7 +202,7 @@ public static Grade GetBaseGrade((int? quality, int? rarity) craftParam) {
     }
 }
 ```
-## プロパティPattern
+## プロパティパターン
 ```cs
 #nullable enable
 public record Hoge(string? Fuga, string? Piyo) {
@@ -164,8 +215,9 @@ public string AvailableHogePropsPattern =>
         _ => EmptyValue
     };
 ```
+分解が出来ない場合はプロパティパターンを利用する。
 
-## プロパティPatternを使っての型switch
+## プロパティパターンを使っての型switch
 ```cs
 if(hoge is {} nonNull){
     //
