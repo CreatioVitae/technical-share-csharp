@@ -165,7 +165,7 @@ public class Fuga {
 ### Deconstructions For class
 自分で```Deconstruct```methodを書くか、拡張メソッドをはやす必要がある。
 
-## using not パターン With 宣言パターン（(C#9～)）
+## using not パターン With 宣言パターン(C#9～)
 ```cs
 public static void NotPattern(object? obj) {
     if(obj is not string nonNullString){
