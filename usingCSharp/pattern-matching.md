@@ -52,7 +52,7 @@ public static int AsInt(object source)
 }
 ```
 
-にコンパイラ生成される。
+にコンパイラ生成される。（当たり前だけれど、参照型なら ```as``` 句、値型なら```(T)```でキャストするようコンパイラ生成してくれる。）
 
 コンパイラ生成を見てもらえばわかるが、宣言パターンで宣言された変数はnonNullであることが保証される。
 
@@ -165,7 +165,7 @@ public class Fuga {
 ### Deconstructions For class
 自分で```Deconstruct```methodを書くか、拡張メソッドをはやす必要がある。
 
-## using not パターン With 宣言パターン（(C#9～)）
+## using not パターン With 宣言パターン(C#9～)
 ```cs
 public static void NotPattern(object? obj) {
     if(obj is not string nonNullString){
