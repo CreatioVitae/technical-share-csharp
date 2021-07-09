@@ -17,3 +17,9 @@ https://visualstudio.microsoft.com/ja/downloads/
 上記からVisualStudio2019をインストールする。
 
 VisualStudio Codeも併せてインストールすることをお勧めする。
+
+## Install SQL Server Management Studio
+https://docs.microsoft.com/ja-jp/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15
+
+## Install Power Toys
+https://docs.microsoft.com/ja-jp/windows/powertoys/install
