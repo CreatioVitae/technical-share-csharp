@@ -1,5 +1,7 @@
 # WIP : using Nullable Reference Type
 
+https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABABi1IEYAWAbjMpoDoARAS2QHMYB7AM4AXDgGMBLAMJ9gGAIJ4EATwEcBjEkVIBmKgCYskrAG9iWc1V0cYQrAElgJ7hiH0sABwBOHAG7Ih2AIubgC+xGYWOlTUlAByyAC22MbOrh7efgFYQWlhRBZYEeYA2gCyGAmoGJ6xfEKxiAgA6gAWuAAUpADsAGrICHAYIFhCnoMANFhJldXDeEl8AGbtAKIAjnAc7kk2AJS7ALpFlliofHwIWAASyALrm9u4tsZYqaHh+ZG6NNoAPDTkAB8AH4sPctjtnq9glg8gVjlFJO1dlgALyAwqfArmOwwDhCADiuGq/QACp4+O4BMiNPCsSckT9/jEMRgNhCnrtTPSCrj8USYCSEOTKdTdrTseZwY8bGicOyZa5jgUbncFZC5WyHhq1Fh+LZ4EgJeY4RYEd9aFhSp0YqCWnxnJMAVhFnBuMgnbaPBwlHwUdyCqbzMcyhUqjU6g0kO15hglu14kl9kd6aRLXzCcTPGSKVTkWjAcqLO0HJNExgUaisO1qJMAERCZAAa1uLQ4dfFxBCQA==
+
 ## Microsoft Docs
 https://docs.microsoft.com/ja-jp/dotnet/csharp/nullable-references
 
@@ -58,7 +60,6 @@ null許容値型と違い、属性で表現(後述)された型になる。た�
 逆にnull許容値型の例えば```int?```は、```nullable<int>```なので```int```とは別の型になる。
 
 ### 属性での表現 について
-https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABAZi1ICYsBhLAb2K1astIBYsBZAClIBGAAwB+LAAsA9gHMMAGioisAMzgzkioWKwAHAJYBPKQEomLNgF9iloA===
 
 * ```NullableContext```
 * ```Nullable```
@@ -77,3 +78,7 @@ https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABAZi1ICYsBhLAb2K1ast
 null検査の実施以降は、non nullとして扱われる。
 
 method等で検査を行う場合、フロー解析へのヒントを属性付与という形で行う必要がある。
+
+## Nullability解析 : MemberNotNull
+
+##  Nullability解析 : MemberNotNullWhen
