@@ -38,7 +38,7 @@ dotnet_diagnostic.CS8604.severity = error
 
 # using Nullable Reference Type
 
-https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABABi1IEYAWAbjMpoDoARAS2QHMYB7AM4AXDgGMBLAMJ9gGAIJ4EATwEcBjEkVIBmKgCYskrAG9iWc1V0cYQrAElgJ7hiH0sABwBOHAG7Ih2AIubgC+xGYWOlTUlAByyAC22MbOrh7efgFYQWlhRBZYEeYA2gCyGAmoGJ6xfEKxiAgA6gAWuAAUpADsAGrICHAYIFhCnoMANFhJldXDeEl8AGbtAKIAjnAc7kk2AJS7ALpFlliofHwIWAASyALrm9u4tsZYqaHh+ZG6NNoAPDTkAB8AH4sPctjtnq9glg8gVjlFJO1dlgALyAwqfArmOwwDhCADiuGq/QACp4+O4BMiNPCsSckT9/jEMRgNhCnrtTPSCrj8USYCSEOTKdTdrTseZwY8bGicOyZa5jgUbncFZC5WyHhq1Fh+LZ4EgJeY4RYEd9aFhSp0YqCWnxnJMAVhFnBuMgnbaPBwlHwUdyCqbzMcyhUqjU6g0kO15hglu14kl9kd6aRLXzCcTPGSKVTkWjAcqLO0HJNExgUaisO1qJMAERCZAAa1uLQ4dfFxBCQA==
+https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABABi1IEYAWAbjMpoDoARAS2QHMYB7AM4AXDgGMBLAMJ9gGAIJ4EATwEcBjEkVIBmKgCYskrAG9iWc1V0cYQrAElgJrNwxD6WAA4AnDgDdkQtgCru4AvmYWEeY6WNZCAPxYABJ8Lg5OLm6ePv6BWMFZ4ZoWllTUlAByyAC22MbOIdl+AUGNRSVRWADaALIY1agYXhV8QhWICADqABa4ABSkAOwAasgIcBggWEJeGwA0WLUDQ1t4tXwAZnMAogCOcBwetTYAlC8Aup0xqHx8CMnIAR3B5PXC2eqZMLEL66GjaAA8NHIAD5EsDHs9wQ1Cp0YYY5i8sABeZFYTolOwwDhCADiuCGawACl4+B4BASNB0iCUYpIFtQEUjSRh7hiwS9TNyShZKdS6TAGQhmaz2S9OdLzOjQTZiThRdq3OSLElAVrMbqRSDzWosPxbPAkOrzO1IlLorDaFgevzyIlpqkMAckVgLnBuMgg+VEh4OEo+ITJSUXeZOr1+oNhqNxkg5mcMJc5lVam9Pm6qJ7ZbT6V4mSy2QTicijeY5g4DkWMISiVg5tQDgAiITIADWgOmHH7auIoSAA
 
 ## Microsoft Docs
 https://docs.microsoft.com/ja-jp/dotnet/csharp/nullable-references
@@ -95,7 +95,9 @@ public bool Vaidate(Hoge hoge){
 * ```[warnings|annotations]``` は指定しない場合、両方指定される。
 
 ## null許容参照型の?と、null許容値型の?の違いについて
-null許容値型と違い、属性で表現(後述)された型になる。ため、例えば```string```と、```string?```は本質的には同じ型になる。
+null許容値型と違い、コンパイラ生成によって属性で表現(後述)された型になる。
+
+そのため、例えば```string```と、```string?```は本質的には同じ型になる。
 
 逆にnull許容値型の例えば```int?```は、```nullable<int>```なので```int```とは別の型になる。
 
@@ -109,6 +111,23 @@ null許容値型と違い、属性で表現(後述)された型になる。た�
 ```NullableContext``` で ```class / method``` に全体適用しつつ、```Nullable``` でオーバーライドする仕組み。
 
 属性の引数は右記の通り。 ```[ 0:oblivious, 1:non null, 2:nullable ]``` 
+
+#### ```NullableContext``` 及び、```Nullable```にコンパイラ生成の例
+```
+public void M(string? hoge, string fuga, string? piyo) {
+}
+```
+と書くと、
+```
+[System.Runtime.CompilerServices.NullableContext(2)]
+public void M(string hoge, [System.Runtime.CompilerServices.Nullable(1)] string fuga, string piyo)
+{
+}
+```
+にコンパイラ生成される。
+
+* メソッド```M```の引数は、```T?```が多いため、メソッドには```NullableContext(2)```が付与される。 ※ 2 は ```nullable```
+* 引数 ```fuga``` は ```T```なので、```Nullable(1)```が付与される。 ※ 1 は ```non null```
 
 実際にはbuild時に展開される
 
