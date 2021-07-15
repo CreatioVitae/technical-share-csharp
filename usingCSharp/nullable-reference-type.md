@@ -130,8 +130,6 @@ public void M(string hoge, [System.Runtime.CompilerServices.Nullable(1)] string 
 * メソッド```M```の引数は、```T?```が多いため、メソッドには```NullableContext(2)```が付与される。 ※ 2 は ```nullable```
 * 引数 ```fuga``` は ```T```なので、```Nullable(1)```が付与される。 ※ 1 は ```non null```
 
-実際にはbuild時に展開される
-
 ## Objectの初期化
 non NullなPropを定義した場合、確実に```ctor```もしくは初期化子で初期化を行う必要がある。
 
