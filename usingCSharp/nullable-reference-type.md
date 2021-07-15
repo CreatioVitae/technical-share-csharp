@@ -51,7 +51,7 @@ https://docs.microsoft.com/ja-jp/dotnet/csharp/nullable-references
 
 今までは参照型は必ず ```nullable``` だったため、 ```method``` の``` In Parameter``` に参照型がある場合、```null``` の検査が必要だった。
 
-これによって、防御的プログラミングにありがちな過剰なNullチェックから解放され、Nullabilityに関して、契約プログラミングが可能になった。
+これによって、防御的プログラミングにありがちな過剰なNullチェックから解放され、シグニチャを見ることでNullabilityが確認できるようになった。
 
 ```
 public bool Vaidate(Hoge hoge) {
