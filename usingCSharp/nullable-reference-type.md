@@ -132,13 +132,6 @@ public void M(string hoge, [System.Runtime.CompilerServices.Nullable(1)] string 
 
 実際にはbuild時に展開される
 
-## フロー解析(flow analysis)
-コードのフローを追跡し、利用箇所より前の時点で代入や検査が行われるかをコンパイラーが調べる仕組み。
-
-null検査の実施以降は、non nullとして扱われる。
-
-method等で検査を行う場合、フロー解析へのヒントを属性付与という形で行う必要がある。
-
 ## Objectの初期化
 non NullなPropを定義した場合、確実に```ctor```もしくは初期化子で初期化を行う必要がある。
 
@@ -155,6 +148,13 @@ non NullなPropを定義した場合、確実に```ctor```もしくは初期化�
 ```
 public string Fuga { get; set;} = "fuga";
 ```
+
+## フロー解析(flow analysis)
+コードのフローを追跡し、利用箇所より前の時点で代入や検査が行われるかをコンパイラーが調べる仕組み。(フロー解析自体は昔から存在している。)
+
+null検査の実施以降は、non nullとして扱われる。
+
+method等で検査を行う場合、フロー解析へのヒントを属性付与という形で行う必要がある。
 
 ## Nullability解析 : MemberNotNull(C#9～)
 ```
