@@ -16,6 +16,7 @@ https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%B3%E3%83%88%E3%83%8B%E3%83%BC%E3%8
 
 ## Null安全 Is 何
 Null検査をコンパイラが強制する仕組み。
+最近の言語には大体入っている（TypeScriptとか、Kotlinとか。）
 
 C#でのNull許容参照型＆Nullability解析はNull安全に相当する機能。
 
@@ -38,7 +39,7 @@ dotnet_diagnostic.CS8604.severity = error
 
 # using Nullable Reference Type
 
-https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABAJgEYyAGLUygFgG5b7KA6AEQEtkBzGAHsAzgBceAYxEcAwkOAYAgngQBPETxGsSRUgGZ65LLKwBvYliv1DPGGKwBJYOaz8MY5lgAOAJx4Abshi2CIeXgC+ltbRVgZYdmIA/FgAEkLuzq7unj7+QSFYYblRutY27HQAcsgAtthmbuF5gcGhzaXlsVgA2kpIQgDuVYgIALrd8Qx06e419ebd5TlYALwAfFgA+gAWGRjzGDrl5cVrm7v7h2tYQQhw2EkpAER4QgDWPM/H1p0xROVpts9nM6thVlZXsgPl8flZuj1eCJkANhqMJgDrFNKDQUgAxOD8ZDXCyYk5NBwbbYAM0JxLBcJOZypW1pROuELuDywTywYh2viGWBgGEGWCUvn4cHq9hGSAAogAPSQYbwSIQwAAUAEpGX94WTKilWXTDoyEQBZDC1VAYXxVIRiOUIADqO1wmtIAHYAGooh4gPm+B4AGiw9RtdsDeHqQmpmvlAEc4DxvDKxNrtRjAYZUEIhAg0sgREmU2ncA5GjlIsRJoYGPoADzTdYpUup9PZDrdOsmHXnLBLayOGA8MQAcVwdpRAAVBd4RDrzYb4rJPZQmy2cMmOxXtaTyVYR2PJyLfLP54vdUOrO3y/Ybhgd/fPDeiyXn52IU+y52tMLHWFUY9R7Fd60YLALXXXEsBBDAwyBNlkAQnEUm8Hg1CEbVFkNfVB0NHorUje1HWdTUYwwONNUOTNsyxCDjwnKdzwQOchAXfsNjfTVnDDQ4w1mA4wWwiFNUoMNnjEZB3mLHYvjDeAkGvIgIiAA==
+https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABAJgEYyAGLUygFgG5b7KA6AEQEtkBzGAHsAzgBceAYxEcAwkOAYAgngQBPETxGsSRUgGZ65LLKwBvYliv1DPGGKwBJYOaz8MY5lgAOAJx4Abshi2CIeXgC+ltbRVgZYdmIA/FgAEkLuzq7unj7+QSFYYblRutY27HQAcsgAtthmbuF5gcGhzaXlsRUMdABicPzI2c3FzBFYALxYAEQAZoPIMzpdROUA2kpIQgDuVYgIALrd8b1pGRg19ebd5TlTAHxYAPoAFhdXGCvl1sWPL+93J8plgggg4NgkikZnghABrHjLbqdGJraxnN4fOrYaazWEIpFoqzdda8ETIbZ7A7HIk9Sg0FIDIbAiy0u4ef7PBbM7HfH5FDmTJ5cxbA6ZgiFYKFYMSvXy7LAwDA7LBKXz8OD1ez7JAAUQAHpIMN4JEIYAAKACUfKwKOJtN6KRFPPqNpJAFkMLVUBhfFUhGIdQgAOqvXDm0gAdgAahSISAZb4IQAaLD1b2+hN4epCObm3UARzgPG8WrElstNPK8VQQiECDSyBEheLpdwDkaOUixBOhgY+gAPL0HikWyWyyMSt1eyYrf9btZHDAeGIAOK4X0UgAK8u8IitbodhlkEcog+HOCL4/bltZ/KsS5X66Vvm3u/31oXVjHbfsIIwV6/p4X6Ns2gETtMAGthOWiKgGioHDadpYDOpCMFg7qngyWCAhgqZnNyyD4fSKTeDwahCJaNy0shHpej6foBkG5rZhgubmp8FZVui6GPmuG6vggO5CHuc5CiB5rOKmnypukQLYlR0zmpQqYzGIyBwk2ryIqm8BIJ+RClGQfbGFw1HVn2lAAGxYLW9ZYAAKr4ahbsgvhhOapiSKm6z+oGByhuGYhJhglZYEIcAOFwKTAFRd73rK8oqkqKp+Y4tTeJgZYYMABpGiaPBmgeyLEBEQA
 
 ## Microsoft Docs
 https://docs.microsoft.com/ja-jp/dotnet/csharp/nullable-references
@@ -138,6 +139,23 @@ null検査の実施以降は、non nullとして扱われる。
 
 method等で検査を行う場合、フロー解析へのヒントを属性付与という形で行う必要がある。
 
+## Objectの初期化
+non NullなPropを定義した場合、確実に```ctor```もしくは初期化子で初期化を行う必要がある。
+
+```ctor```での初期化
+```
+    public C(IEnumerable<string> equipment){
+        InitGeneralProps();
+        Equipment = equipment;
+        HasEquipment = equipment is not null;
+    }
+```
+
+初期化子での初期化
+```
+public string Fuga { get; set;} = "fuga";
+```
+
 ## Nullability解析 : MemberNotNull(C#9～)
 ```
 public C() => 
@@ -202,3 +220,15 @@ JsonをPostするケースで、non Nullな参照型だと、Jsonのパースエ
 
 尚、構造体は、そもそも型が違うためか、パースエラーは起こらない。
 
+## NotNullWhen
+戻り値に応じて ```non Null``` であることを保証する。
+```
+public class D {
+    public static bool TryParse(C c, [NotNullWhen(true)] out D? d) {
+        ///
+    }
+}
+```
+上記メソッドの場合、```TryParse```の結果がtrueの場合、```d```は```non Null```であることが保証される。
+
+## Todo : 型引数に関する説明。MaybeNull, NotNull,　MaybeNullWhen
