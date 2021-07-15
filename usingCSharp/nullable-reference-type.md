@@ -181,14 +181,14 @@ void InitGeneralProps() =>
 ```MemberNotNull```を付与することで、指定した、Propがnon Nullでの初期化を保証する。
 
 
-##  Nullability解析 : MemberNotNullWhen
+## Nullability解析 : MemberNotNullWhen
 ```returnValue``` が 所定の値の場合（When）、指定した```member```がnon Nullであることを保証する。
 ```
 [MemberNotNullWhen(returnValue: true, member: nameof(Equipment))]
 public bool HasEquipment { get; }
 ```
 
-## AllowNull
+## Nullability解析 : AllowNull
 ```?```が付いていなくても、```Null```を受け入れることを保証する。```Null```を受け入れ、```non Null```を返すケースで利用する。
 ```
 [AllowNull]
@@ -200,7 +200,7 @@ public string HogeName {
 string _hogeName =  "naoki";
 ```
 
-## DisallowNull
+## Nullability解析 : DisallowNull
 ```?```が付いていても```Null```を受け入れないことを保証する。
 ```
 [DisallowNull]
@@ -220,7 +220,7 @@ JsonをPostするケースで、non Nullな参照型だと、Jsonのパースエ
 
 尚、構造体は、そもそも型が違うためか、パースエラーは起こらない。
 
-## NotNullWhen
+## Nullability解析 : NotNullWhen
 戻り値に応じて ```non Null``` であることを保証する。
 ```
 public class D {
