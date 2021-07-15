@@ -1,6 +1,6 @@
 # Introduction:Null安全
 ## Null Is 何
-null = 無効なことを保証できるポインター
+null = Invalidなことを保証できるポインター
 
 => 不定動作と比べれば即死の方がマシ（無効な参照であることが自明、且つ null参照例外を起こせる）
 
@@ -38,7 +38,7 @@ dotnet_diagnostic.CS8604.severity = error
 
 # using Nullable Reference Type
 
-https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABABi1IEYAWAbjMpoDoARAS2QHMYB7AM4AXDgGMBLAMJ9gGAIJ4EATwEcBjEkVIBmKgCYskrAG9iWc1V0cYQrAElgJrNwxD6WAA4AnDgDdkQtgCru4AvmYWEeY6WNZCAPxYABJ8Lg5OLm6ePv6BWMFZ4ZoWllTUlAByyAC22MbOIdl+AUGNRSVRWADaALIY1agYXhV8QhWICADqABa4ABSkAOwAasgIcBggWEJeGwA0WLUDQ1t4tXwAZnMAogCOcBwetTYAlC8Aup0xqHx8CMnIAR3B5PXC2eqZMLEL66GjaAA8NHIAD5EsDHs9wQ1Cp0YYY5i8sABeZFYTolOwwDhCADiuCGawACl4+B4BASNB0iCUYpIFtQEUjSRh7hiwS9TNyShZKdS6TAGQhmaz2S9OdLzOjQTZiThRdq3OSLElAVrMbqRSDzWosPxbPAkOrzO1IlLorDaFgevzyIlpqkMAckVgLnBuMgg+VEh4OEo+ITJSUXeZOr1+oNhqNxkg5mcMJc5lVam9Pm6qJ7ZbT6V4mSy2QTicijeY5g4DkWMISiVg5tQDgAiITIADWgOmHH7auIoSAA
+https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABAJgEYyAGLUygFgG5b7KA6AEQEtkBzGAHsAzgBceAYxEcAwkOAYAgngQBPETxGsSRUgGZ65LLKwBvYliv1DPGGKwBJYOaz8MY5lgAOAJx4Abshi2CIeXgC+ltbRVgZYdmIA/FgAEkLuzq7unj7+QSFYYblRutY27HQAcsgAtthmbuF5gcGhzaXlsVgA2kpIQgDuVYgIALrd8Qx06e419ebd5TlYALwAfFgA+gAWGRjzGDrl5cVrm7v7h2tYQQhw2EkpAER4QgDWPM/H1p0xROVpts9nM6thVlZXsgPl8flZuj1eCJkANhqMJgDrFNKDQUgAxOD8ZDXCyYk5NBwbbYAM0JxLBcJOZypW1pROuELuDywTywYh2viGWBgGEGWCUvn4cHq9hGSAAogAPSQYbwSIQwAAUAEpGX94WTKilWXTDoyEQBZDC1VAYXxVIRiOUIADqO1wmtIAHYAGooh4gPm+B4AGiw9RtdsDeHqQmpmvlAEc4DxvDKxNrtRjAYZUEIhAg0sgREmU2ncA5GjlIsRJoYGPoADzTdYpUup9PZDrdOsmHXnLBLayOGA8MQAcVwdpRAAVBd4RDrzYb4rJPZQmy2cMmOxXtaTyVYR2PJyLfLP54vdUOrO3y/Ybhgd/fPDeiyXn52IU+y52tMLHWFUY9R7Fd60YLALXXXEsBBDAwyBNlkAQnEUm8Hg1CEbVFkNfVB0NHorUje1HWdTUYwwONNUOTNsyxCDjwnKdzwQOchAXfsNjfTVnDDQ4w1mA4wWwiFNUoMNnjEZB3mLHYvjDeAkGvIgIiAA==
 
 ## Microsoft Docs
 https://docs.microsoft.com/ja-jp/dotnet/csharp/nullable-references
@@ -89,9 +89,9 @@ public bool Vaidate(Hoge hoge){
 ```#nullable enable|disable|restore [warnings|annotations]```
 
 
-* ```#nullable enable``` でNull許容参照型を有効にできる。
-* ```#nullable disable``` でNull許容参照型を無効にできる。
-* ```#nullable restore``` でNull許容参照型を1つ前の設定に戻せる。
+* ```#nullable enable``` でNull許容参照型を有効にする。
+* ```#nullable disable``` でNull許容参照型を無効にする。
+* ```#nullable restore``` でNull許容参照型をプロジェクトの設定に戻す。
 * ```[warnings|annotations]``` は指定しない場合、両方指定される。
 
 ## null許容参照型の?と、null許容値型の?の違いについて
@@ -171,5 +171,34 @@ public bool HasEquipment { get; }
 ```
 
 ## AllowNull
+```?```が付いていなくても、```Null```を受け入れることを保証する。```Null```を受け入れ、```non Null```を返すケースで利用する。
+```
+[AllowNull]
+public string HogeName {
+    get => _hogeName;
+    set => _hogeName = value ?? "naoki";
+}
 
-## DiallowNull
+string _hogeName =  "naoki";
+```
+
+## DisallowNull
+```?```が付いていても```Null```を受け入れないことを保証する。
+```
+[DisallowNull]
+public string? FugaName {
+    get => _fugaName;
+    set => _fugaName = value ?? throw new ArgumentNullException();
+}
+
+string? _fugaName;
+```
+### その他利用ケース
+```DisallowNull```は、エンドポイントへのモデルバインドを行う際に設定することがある。
+
+JsonをPostするケースで、non Nullな参照型だと、Jsonのパースエラー（500エラー）が発生してしまう。
+
+その場合は、```[Required, DisallowNull]```のような属性付与で400エラーになるよう処置が必要。
+
+尚、構造体は、そもそも型が違うためか、パースエラーは起こらない。
+
