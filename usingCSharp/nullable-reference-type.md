@@ -39,7 +39,7 @@ dotnet_diagnostic.CS8604.severity = error
 
 # using Nullable Reference Type
 
-https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABAJgEYyAGLUygFgG5b7KA6AEQEtkBzGAHsAzgBceAYxEcAwkOAYAgngQBPETxGsSRUgGZ65LLKwBvYliv1DPGGKwBJYOaz8MY5lgAOAJx4Abshi2CIeXgC+ltbRVgZYdmIA/FgAEkLuzq7unj7+QSFYYblRutY27HQAcsgAtthmbuF5gcGhzaXlsRUMdABicPzI2c3FzBFYALxYAEQAZoPIMzpdROUA2kpIQgDuVYgIALrd8b1pGRg19ebd5TlTAHxYAPoAFhdXGCvl1sWPL+93J8plgggg4NgkikZnghABrHjLbqdGJraxnN4fOrYaazWEIpFoqzdda8ETIbZ7A7HIk9Sg0FIDIbAiy0u4ef7PBbM7HfH5FDmTJ5cxbA6ZgiFYKFYMSvXy7LAwDA7LBKXz8OD1ez7JAAUQAHpIMN4JEIYAAKACUfKwKOJtN6KRFPPqNpJAFkMLVUBhfFUhGIdQgAOqvXDm0gAdgAahSISAZb4IQAaLD1b2+hN4epCObm3UARzgPG8WrElstNPK8VQQiECDSyBEheLpdwDkaOUixBOhgY+gAPL0HikWyWyyMSt1eyYrf9btZHDAeGIAOK4X0UgAK8u8IitbodhlkEcog+HOCL4/bltZ/KsS5X66Vvm3u/31oXVjHbfsIIwV6/p4X6Ns2gETtMAGthOWiKgGioHDadpYDOpCMFg7qngyWCAhgqZnNyyD4fSKTeDwahCJaNy0shHpej6foBkG5rZhgubmp8FZVui6GPmuG6vggO5CHuc5CiB5rOKmnypukQLYlR0zmpQqYzGIyBwk2ryIqm8BIJ+RClGQfbGFw1HVn2lAAGxYLW9ZYAAKr4ahbsgvhhOapiSKm6z+oGByhuGYhJhglZYEIcAOFwKTAFRd73rK8oqkqKp+Y4tTeJgZYYMABpGiaPBmgeyLEBEQA
+https://sharplab.io/#v2:CYLg1APgxAdgrgGwQQwEYIKYAIMzZgWAChiABAJgEYyAGLUygFgG5b7KA6AEQEtkBzGAHsAzgBceAYxEcAwkOAYAgngQBPETxGsSRUgGZ65LLKwBvYliv1DPGGKwBJYOaz8MY5lgAOAJx4Abshi2CIeXgC+ltbRVgZYdmIA/FgAEkLuzq7unj7+QSFYYblRutY27HQAcsgAtthmbuF5gcGhzaXlsRUMdABicPzI2c3FzBFYALxYAEQAZoPIMzpdROUA2kpIQgDuVYgIALrd8b1pGRg19ebd5TlTAHxYAPoAFhdXGCvl1sWPL+93J8plgggg4NgkikZnghABrHjLbqdGJraxnN4fOrYaazWEIpFoqzdda8ETIbZ7A7HIk9Sg0FIDIbAiy0u4ef7PBbM7HfH5FDmTJ5cxbA6ZgiFYKFYMSvXy7LAwDA7LBKXz8OD1ez7JAAUQAHpIMN4JEIYAAKACUfKwKOJtN6KRFPPqNpJAFkMLVUBhfFUhGIdQgAOqvXDm0gAdgAahSISAZb4IQAaLD1b2+hN4epCObm3UARzgPG8WrElstNPK8VQQiECDSyBEheLpdwDkaOUixBOhgY+gAPL0HikWyWyyMSt1eyYrf9btZHDAeGIAOK4X0UgAK8u8IitbodhlkEcog+HOCL4/bltZ/KsS5X66Vvm3u/31oXVjHbfsIIwV6/p4X6Ns2gETtMAGthOWiKgGioHDadpYDOpCMFg7qngyWCAhgqZnNyyD4fSKTeDwahCJaNy0shHpej6foBkG5rZhgubmp8FZVui6GPmuG6vggO5CHuc5CiB5rOKmnypukQLYlR0zmpQqYzGIyBwk2ryIqm8BIJ+RClGQfbGFw1HVn2lAAGxYLW9ZYAAKr4ahbsgvhhOapiSKm6z+oGByhuGYhJhglZYEIcAOFwKTAFRd73rK8oqkqKp+Y4tTeJgZYYMABpGiaPBmgeyLEEZegmVguoDg5TzxXEhgOSkckYGJTyKHMyCIMBtKoehTLIHOdU/EEvhYPqIIpZVQ4kQ8VocM1xVstYI1YGoE3KlNw5zQtBn3qCblYAAXutKpVYkSSzZa80XIte0rfqajHdMk1nfYl3Xe4B57ShNGlUAA=
 
 ## Microsoft Docs
 https://docs.microsoft.com/ja-jp/dotnet/csharp/nullable-references
@@ -153,6 +153,50 @@ public string Fuga { get; set;} = "fuga";
 null検査の実施以降は、non nullとして扱われる。
 
 method等で検査を行う場合、フロー解析へのヒントを属性付与という形で行う必要がある。
+
+## 制約なしT? について（C#9～）
+C#9からは、```T```の制約に、```class``` or ```struct``` の制約を付与しなくとも```T?```を書くことが出来るようになった。
+
+```
+public class E<T> {
+    public T? Hoge() => default;
+    
+    public void Fuga() {
+        var x = new E<string?>().Hoge();
+        var y = new E<string>().Hoge();
+        var z = new E<int?>().Hoge();
+        var xyz = new E<int>().Hoge();         
+    }
+}
+```
+
+上記のコードは、
+
+```
+public class E<T>
+{
+    public T Hoge()
+    {
+        return default(T);
+    }
+
+    public void Fuga()
+    {
+        string text = new E<string>().Hoge();
+        string text2 = new E<string>().Hoge();
+        Nullable<int> num = new E<Nullable<int>>().Hoge();
+        int num2 = new E<int>().Hoge();
+    }
+}
+```
+にコンパイル生成される。
+型引数がnull許容値型:```int?```を指定した場合、```T?```が戻り値であろうと、```Default```は、```0```を返却する。
+逆に、null非許容参照型であろうと、Defaultは、nullを返却する。（内部実装上は```string```も```string?```も同じ```string```なので、```string```の```Default```であるnullが返る。）
+
+```Linq```の```FirstOrDefault```の挙動を考えてもらえるとわかりやすい
+```
+public static TSource? FirstOrDefault<TSource> (this System.Collections.Generic.IEnumerable<TSource> source, Func<TSource,bool> predicate);
+```
 
 ## Nullability解析 : MemberNotNull(C#9～)
 ```
