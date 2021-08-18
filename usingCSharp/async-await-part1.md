@@ -1,173 +1,173 @@
-# using async / await Part1
+﻿# using async / await Part1
 ## TL;DR
-### �񓯊����\�b�h�A���͕K�������񓯊�����Ȃ��B
-=>1�ڂ�await����O�܂ł͂����̓������s�B�i������s�͋��Ȃ̂ŁA���ӂ��K�v�B�j
+### 非同期メソッド、実は必ずしも非同期じゃない。
+=>1個目のawaitより手前まではただの同期実行。（並列実行は苦手なので、注意が必要。）
 
-=>�����ς݃^�X�N��await���Ă��R�X�g�͒Ⴂ�B�i�R�[���o�b�N�W�J���Ȃ�����B�j
+=>完了済みタスクをawaitしてもコストは低い。（コールバック展開しないから。）
 
-### async void�͎g��Ȃ�
-=>���p�ȃo�O��ςݍ��ތ����ɂȂ�B�P�̃e�X�g���{���Ɍ��m�ł���\�����P�O�O���ɂȂ�Ȃ����߁A�������������Ă͂����Ȃ��B
+### async voidは使わない
+=>無用なバグを積み込む原因になる。単体テスト実施時に検知できる可能性が１００％にならないため、そもそも書いてはいけない。
 
-=>�߂�l���Ȃ��A��O�󂯎��Ȃ��B����΃C�x���g�n���h����async���̂��߂����ɗp�ӂ��ꂽ���̂Ȃ̂ŁA�ւ��Ȃ��悤�ɂ��邱�ƁBasync void�ł͂Ȃ��A�K��async task���g���B
+=>戻り値取れない、例外受け取れない。言わばイベントハンドラのasync化のためだけに用意されたものなので、関わらないようにすること。async voidではなく、必ずasync taskを使う。
 
-### async���\�b�h�̖߂�l�Ƃ��Ď󂯎����Task��Wait���Ȃ��B
+### asyncメソッドの戻り値として受け取ったTaskはWaitしない。
 
-=>�f�b�h���b�N����������B�g��Ȃ����ƁB
+=>デッドロックが発生する。使わないこと。
 
-### Constructor�ɂ�async�������Ȃ��i�񓯊��R���X�g���N�^�[���~�����Ă����ꐧ�����Ȃ��j
+### Constructorにはasyncがつけられない（非同期コンストラクターが欲しくても言語制約上作れない）
 
-=>CreateAsync���\�b�h���쐬���Ă��̒��ŏ������������s���B�i�߂�ǂ������B�ł��o���Ȃ����炱�����邵���Ȃ��B�j
+=>CreateAsyncメソッドを作成してその中で初期化処理を行う。（めんどくさい。でも出来ないからこうするしかない。）
 
-### async / await �� I/O�҂��̍ۂɐϋɓI�Ɏg��
-async / await �� I/O�҂��̍ۂɐϋɓI�Ɏg�����ƂŃX���b�h�����b�N����邱�Ƃ�h���A�S�̂̃X���[�v�b�g�̌��オ�����߂�B
+### async / await は I/O待ちの際に積極的に使う
+async / await は I/O待ちの際に積極的に使うことでスレッドをロックされることを防ぎ、全体のスループットの向上が見込める。
 
-���A�������g�̏����Ă��鏈�����̂̓R�[���o�b�N�o�^���s���邱�ƂŎ኱�̃I�[�o�[�w�b�h���ςݍ��܂�邪�AI/O�҂��̏ꍇ�́AUI�X���b�h�̃A�����b�N�{�X���b�h�v�[���Ɉڏ����鏈�����O������̃R�[���o�b�N�҂��ɏo����B
+今、自分自身の書いている処理自体はコールバック登録が行われることで若干のオーバーヘッドが積み込まれるが、I/O待ちの場合は、UIスレッドのアンロック＋スレッドプールに移譲する処理も外部からのコールバック待ちに出来る。
 
-I/O�҂��̏����ł͐ϋɓI��async / await�𗘗p���ׂ��B
+I/O待ちの処理では積極的にasync / awaitを利用すべし。
 
-## �񓯊��̎��
-* �������s(Concurrency)
-* ������s(parallelism)
-* I/O�҂�(I/O Completion)
+## 非同期の種類
+* 同時実行(Concurrency)
+* 並列実行(parallelism)
+* I/O待ち(I/O Completion)
 
- **async / await�̎g���ǂ����I/O�҂�** 
+ **async / awaitの使いどころはI/O待ち** 
 
-## .NET�̔񓯊������@�\�i����������async / await��m���ł̊�b�I�Ȃ��b���܂ށj
+## .NETの非同期処理機能（ここから先はasync / awaitを知る上での基礎的なお話も含む）
 ### System.Threading.Thread;
-* ���X���b�h��\���N���X
-* OS���̌����Ő؂�ւ���ۏ�
-* �A���A **���d** 
-#### ���d is ����
-##### �X���b�h������郊�\�[�X�i�P�X���b�h�ӂ�j
-* �X���b�h���̂̊Ǘ����(1KB)
-* �X�^�b�N�������i1MB�j
+* 生スレッドを表すクラス
+* OS側の権限で切り替えを保証
+* 但し、 **激重** 
+#### 激重 is 何故
+##### スレッドが消費するリソース（１スレッド辺り）
+* スレッド自体の管理情報(1KB)
+* スタックメモリ（1MB）
 
-##### �X���b�h�J�n���I�����̃R�X�g
-* OS�̃C�x���g����
+##### スレッド開始＆終了時のコスト
+* OSのイベント発火
 
-##### �X���b�h�؂�ւ��ɔ����R�X�g
-* OS�̓������[�h�ւ̈ڍs�E���A
-* ���W�X�^�[�̕ۑ��E����
-* ���Ɏ��s����X���b�h�̌���
+##### スレッド切り替えに伴うコスト
+* OSの特権モードへの移行・復帰
+* レジスターの保存・復元
+* 次に実行するスレッドの決定
 
-##### �R�[�h��
+##### コード例
 ```
 var t = new Thread(() =>{
-    // �V�����X���b�h�Ŏ��s����������
+    // 新しいスレッドで実行したい処理
 });
 
 t.start();
 ```
 
- **�� �ܘ_�ߘa�̎���ɐ��X���b�h�����̂܂܈������Ƃ͂���܂���B** 
+ **※ 勿論令和の時代に生スレッドをそのまま扱うことはありません。** 
 
 ### System.Threading.ThreadPool;
-* �X���b�h�v�[�����g�����߂̃N���X
+* スレッドプールを使うためのクラス
 
-.NET 4�ȑO�͂�������g���K�v���������B
-�񓯊������̊�����҂��ĈႤ�񓯊��������J�n���邱�Ƃ��o���Ȃ��B
-��O��A�������ʂ̒l���g�����Ƃ��o���Ȃ��B
+.NET 4以前はこちらを使う必要があった。
+非同期処理の完了を待って違う非同期処理を開始することが出来ない。
+例外や、処理結果の値を使うことが出来ない。
 
-#### �R�[�h��
+#### コード例
 ```
 ThreadPool.QueueUserWorkItem(_ =>{
-    // �X���b�h�v�[����Ŏ��s����������
+    // スレッドプール上で実行したい処理
 });
-//�����ɉ��������Ɓ��Ƃ͓������s�ɂȂ�
+//ここに何か書くと↑とは同時実行になる
 ```
 
-#### �X���b�h�v�[�� Is ��
-���O�ɂ������X���b�h�𗧂ĂĂ����āA�g���܂킷�d�g��
-�X���b�h�Ɋւ�镉�S���y������B
-�������A�D��x����s���ԓ��ׂ̍����ۏ�͂ł��Ȃ��B
+#### スレッドプール Is 何
+事前にいくつかスレッドを立てておいて、使いまわす仕組み
+スレッドに関わる負担を軽減する。
+ただし、優先度や実行順番等の細かい保障はできない。
 
-##### I/O�҂��ƃX���b�h�v�[���̊֌W
-�񓯊�I/O API�𗘗p����I/O�҂����s���B
-* Windows=> I/O�����|�[�g
-* Linux=>epoll�iFile I/O�͂܂��ႤApi�������C������B�j
+##### I/O待ちとスレッドプールの関係
+非同期I/O APIを利用してI/O待ちを行う。
+* Windows=> I/O完了ポート
+* Linux=>epoll（File I/Oはまた違うApiだった気もする。）
 * BSD/Mac=>kqueue
-I/O������������X���b�h�v�[���ɃR�[���o�b�N�����𓊔�����d�g�݁B
+I/Oが完了したらスレッドプールにコールバック処理を投函する仕組み。
 
 ### System.Threading.Tasks.Task;
-�񓯊������̑�����������N���X
-�V�K�ɔ񓯊��������J�n����Ƃ���Run���\�b�h�𗘗p����B
-�񓯊������̂��Ƃɉ������������Ƃ���ContinueWith���\�b�h�𗘗p����B
-���AContinueWith�𗘗p����ہA�����w�肵�Ȃ��ꍇ�́A�㑱�^�X�N�̓X���b�h�v�[����Ŏ��s�����B
-UI�X���b�h�𑀍삵�����ꍇ�́A```TaskScheduler.FromCurrentSynchronizationContext()```��TaskScheduler�̈����ɐݒ肷�邱�ƁB
+非同期処理の続きが書けるクラス
+新規に非同期処理を開始するときはRunメソッドを利用する。
+非同期処理のあとに何か続けたいときはContinueWithメソッドを利用する。
+尚、ContinueWithを利用する際、何も指定しない場合は、後続タスクはスレッドプール上で実行される。
+UIスレッドを操作したい場合は、```TaskScheduler.FromCurrentSynchronizationContext()```をTaskSchedulerの引数に設定すること。
 
- [�Q�l:ContinueWith](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.tasks.task.continuewith?view=net-5.0#System_Threading_Tasks_Task_ContinueWith_System_Action_System_Threading_Tasks_Task_System_Object__System_Object_System_Threading_CancellationToken_System_Threading_Tasks_TaskContinuationOptions_System_Threading_Tasks_TaskScheduler_) 
+ [参考:ContinueWith](https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.tasks.task.continuewith?view=net-5.0#System_Threading_Tasks_Task_ContinueWith_System_Action_System_Threading_Tasks_Task_System_Object__System_Object_System_Threading_CancellationToken_System_Threading_Tasks_TaskContinuationOptions_System_Threading_Tasks_TaskScheduler_) 
 
-#### �R�[�h��
+#### コード例
 ```
 Task.Run(() =>{
-    //�񓯊�����
-    return �߂�l;
+    //非同期処理
+    return 戻り値;
 }).ContinueWith(t =>{
     var result = t.Result;
-    //�㑱�̏���
+    //後続の処理
 }
 ```
 
 ### async
-async���������\�b�h=>���\�b�h���񓯊��ł��邱�Ƃ̃}�[�J�[�B
+asyncがついたメソッド=>メソッドが非同期であることのマーカー。
 
 https://docs.microsoft.com/ja-jp/dotnet/csharp/language-reference/keywords/async
 
 #####  About ```return value```
-```void```�ł͂Ȃ��K���A```Task```���w�肷��B�i�߂�l�͕Ԃ��Ȃ��B�j
-```T```��Ԃ������ꍇ�A ```Task<T>```���w�肷��B
+```void```ではなく必ず、```Task```を指定する。（戻り値は返せない。）
+```T```を返したい場合、 ```Task<T>```を指定する。
 
-#### await Keyword�iCase ```Task```, ```Task<T>```�j
-```await``` Keyword�̂������������s����ꍇ�A
+#### await Keyword（Case ```Task```, ```Task<T>```）
+```await``` Keywordのついた処理を実行する場合、
 
-* await Keyword���t�^���ꂽ�������X���b�h�v�[���Ŏ��s����B
-* ���\�b�h���ǂ��܂Ŏ��s���������L�^����B
-* goto���x����await Keyword���t�^���ꂽ�����̌�ɑ}������B
-* �X���b�h�v�[���̏����������ς̏ꍇ�́A�㑱�̏����𗬂��B
-* �X���b�h�v�[���̏������������Ȃ�ContinueWith�Ŏ������g���R�[���o�b�N�o�^�i=�X���b�h�v�[���ɗa�����������I�������ċA�Ăяo���j
-* �ċA�Ăяo���̎��A�\���Ă��������x���ʒu�܂�goto
-�Ƃ���������������ɓW�J���Ă����B�ia.k.a. StateMachine�j
+* await Keywordが付与された処理をスレッドプールで実行する。
+* メソッドをどこまで実行したかを記録する。
+* gotoラベルをawait Keywordが付与された処理の後に挿入する。
+* スレッドプールの処理が完了済の場合は、後続の処理を流す。
+* スレッドプールの処理が未完了ならContinueWithで自分自身をコールバック登録（=スレッドプールに預けた処理が終わったら再帰呼び出し）
+* 再帰呼び出しの時、貼っておいたラベル位置までgoto
+といった処理を勝手に展開してくれる。（a.k.a. StateMachine）
 
-�܂�Aasync / await�́A�����J����ƁA(Task�̏ꍇ�jContinueWith�𗘗p���āAI/O�҂��̓W�J��AI/O�҂��I����̏����ĊJ�𐧌䂷��R�[�h���L�[���[�h�ꔭ�ŏ�����d�g�݁B
-�����āATask��ThreadPool���A�֗��Ɏg���d�g�݁B
+つまり、async / awaitは、中を開けると、(Taskの場合）ContinueWithを利用して、I/O待ちの展開や、I/O待ち終了後の処理再開を制御するコードをキーワード一発で書ける仕組み。
+そして、TaskはThreadPoolを、便利に使う仕組み。
 
 #### async / await Bad Practices
 ##### async void is bad;
 public async void GetHogeAsync()
-�Ƃ����ƁA���\�b�h����await���o���Ȃ��B�����āA��O���󂯎�邱�Ƃ��o���Ȃ��B
-async Task���ƁAawait�ŏI���҂����o����B��O���󂯎�邱�Ƃ��o����B
+とかやると、メソッド内でawaitが出来ない。そして、例外も受け取ることが出来ない。
+async Taskだと、awaitで終了待ちが出来る。例外を受け取ることも出来る。
 
-**async void����������𓾂Ȃ��̂́AWinForm���ŃC�x���g�n���h�������ꍇ�̂݁B�iasync void����Ȃ��Ɣ񓯊��Ή��ł��Ȃ��̂Ŏd���Ȃ��c���Ă���B�j** 
+**async voidを書かざるを得ないのは、WinForm等でイベントハンドラを作る場合のみ。（async voidじゃないと非同期対応できないので仕方なく残っている。）** 
 
-async void���\�b�h�̏�������������܂łɃX���b�h�v�[���ɗa�����񓯊��������������Ȃ��ꍇ�A
-```System.InvalidOperationException```�ŗ����܂��B
-�� async void���\�b�h�{�̂̏������x���āA�X���b�h�v�[���ɗa�����񓯊������������ɓ��삵�Ă��鎞�͔��o���Ȃ����ł��B
+async voidメソッドの処理が完了するまでにスレッドプールに預けた非同期処理が完了しない場合、
+```System.InvalidOperationException```で落ちます。
+※ async voidメソッド本体の処理が遅くて、スレッドプールに預けた非同期処理が高速に動作している時は発覚しない負債です。
 
 ##### (async returned)Task.Wait is bad;
-async ���\�b�h�̖߂�l��Task��```.Wait```���Ă͂����Ȃ��B
-=> �f�b�h���b�N�Ŏ��ʂ��߁B
+async メソッドの戻り値のTaskを```.Wait```してはいけない。
+=> デッドロックで死ぬため。
 ```
-var t = MailClient.SendAsync(new �c�ȗ�);
+var t = MailClient.SendAsync(new …省略);
 
 t.Wait();
 ```
-�Ƃ����ꍇ
+とした場合
 
-�P�Dt.Wait��UI�X���b�h�����b�N����B
+１．t.WaitでUIスレッドをロックする。
 
-�Q�DMailClient.SendAsync�́A�X���b�h�v�[������UI�X���b�h�ɐ����߂����Ƃ���
+２．MailClient.SendAsyncは、スレッドプールからUIスレッドに制御を戻そうとする
 
-�R�D���b�N���ꂽUI�X���b�h�ɐ����߂����A�f�b�h���b�N�ŏ����p���s�\
+３．ロックされたUIスレッドに制御を戻せず、デッドロックで処理継続不可能
 
-�ƂȂ�B
+となる。
 
-<b>Task�́Aawait ���ׂ��B</b>
+<b>Taskは、await すべし。</b>
 
 ##### Can't Write async Constructor;
-C#�ł�async Constructor�͏������Ƃ��ł��Ȃ��B�i���������\���G���[�ɂȂ�B�� C#9���݁j
+C#ではasync Constructorは書くことができない。（そもそも構文エラーになる。※ C#9現在）
 
-���AConstructor�̔��΂ł����Ă���Object�𗘗p�\�Ƃ���Ƃ��������̌����ɑ���ƁAasync���\�b�h���Ăт����Ȃ鎞������B
+が、Constructorの発火でもってそのObjectを利用可能とするという役割の原則に則ると、asyncメソッドを呼びたくなる時がある。
 
-<b>(��):MailClient��Wrapper�������ꍇ���ł���΁AMailServer�ւ̐ڑ���F�؂܂ł�Constructor�ōs����������ǁA�����͓��������ł͂Ȃ��AI/O�҂��ōs�������i�l�b�g���[�N�z���̏����̂��߁B�j</b>
+<b>(例):MailClientのWrapperを書く場合等であれば、MailServerへの接続や認証までをConstructorで行いたいけれど、これらは同期処理ではなく、I/O待ちで行いたい（ネットワーク越しの処理のため。）</b>
 
-���̏ꍇ�Astatic��CreateAsync�𐶂₵�Ă�����K�v������B
+その場合、staticなCreateAsyncを生やしてあげる必要がある。
