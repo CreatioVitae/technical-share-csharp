@@ -127,6 +127,7 @@ https://www.nuget.org/packages/ValueTaskSupplement/
 
 ## await using
 using を非同期で宣言可能になった。（C#8～）
+    
 using 宣言した変数のライフタイム終了時にDisposeAsyncが発火し、解体処理が行われる仕組み。
 
 ```cs
@@ -135,6 +136,7 @@ await using var scopedTransaction = await BbsScopedTransactionBuilder.BeginScope
 ```
 ### using との違い
 ```using```は```IDisposable``` インターフェースを実装していることで利用可能になる構文。
+    
 一方、```await using```は```IAsyncDisposable``` インターフェースを実装していなくても、```DisposeAsync```メソッドが```Member```にいれば利用可能。（いつものパターンベース実装）
 
 ### ```IAsyncDisposable``` の存在意義
