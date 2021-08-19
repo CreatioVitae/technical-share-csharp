@@ -16,7 +16,7 @@ void Main / int Main が既にいる場合、async Task Mainはエントリー�
 ### ```foreach + await;```
 
 <b>I/O待ちを都度行うコード例</b>
-```
+```cs
 // Use ValueTuple(C# 7.0)
 static async Task CopyAsync((string originDirectory, string destinationDirectory) copySettings){
     // Deconstruction(C# 7.0)
@@ -39,7 +39,7 @@ await CopyAsync((originDirectory: $"{appDirectory}/Origin",destinationDirectory:
 マシン全体にとっては無意味ではないものの、折角のI/O待ちなのだから、都度待機はしたくない。
 
 <b>Linq + await;</b>を利用する
-```
+```cs
 // Use ValueTuple(C# 7.0)
 static async Task CopyAsync((string originDirectory, string destinationDirectory) copySettings) {
     (var originDirectory, var destinationDirectory) = copySettings;
@@ -64,3 +64,63 @@ https://docs.microsoft.com/ja-jp/dotnet/api/system.linq.enumerable.select?view=n
 ```Linq``` の　```Select``` メソッドは見ての通り、戻り値が必要になるので、```void```のLamdaは通らない。
 
 一方で、```async``` Lamdaは```Task```が返るため、```Select```メソッドを通る。
+
+#### 拡張メソッドを作って後置き```WhenAll```を書く
+
+https://github.com/CreatioVitae/BclExtensionPack/blob/master/src/BclExtensionPack.CoreLib/TaskEnumerableExtensions.cs
+
+```cs
+static async Task CopyAsync((string originDirectory, string destinationDirectory) copySettings) {
+    (var originDirectory, var destinationDirectory) = copySettings;
+    // Lamdaの中でasyncを書く =>　IEnumerable<Task> が返る
+    // Task.WhenAllで I/O待ち
+    await Directory.EnumerateFiles(originDirectory).Select(async filename => {
+        using var originStream = File.Open(fileName, FileMode.Open);
+        using var destinationStream = File.Create($"{destinationDirectory}{fileName.LastIndexOf('\\'))}");
+        await originStream.CopyToAsync(destinationStream);
+    }).WhenAll();
+}
+```
+
+## System.Threading.Tasks.ValueTask
+同期処理のみで完結している処理フローの場合は値をそのまま保持する。 => 非同期じゃないのに```Task, Task<T>```が作られるのはパフォーマンスペナルティがあるため避けたい
+
+非同期が必要な場合のみ、```Task``` or ```IValueTaskSource```を生成する。 <b>※　```IValueTaskSource```は```.NET Core 2.1```から</b>
+
+```Task / IValueTaskSource```は都度生成ではなく、キャッシュを持っている。（.NET Core 2.1以降のIValueTaskSource誕生後からの仕組みと思われる。）
+
+```cs
+public async ValueTask DisposeAsync() {
+    if (DbTransaction.IsInvalid()) {
+        return;
+    }
+
+    if (ScopeIsComplete) {
+        await DbTransaction.CommitAsync();
+        return;
+    }
+
+    await DbTransaction.RollbackAsync();
+}
+```
+
+必ず非同期処理を行う場合 => ```Task,Task<T>```
+
+Validation等の同期処理後、Early Return等がありうる場合 => ```ValueTask, ValueTask<T>```
+
+というのが、C#7＆.NET Core 2.0時代での筋の良い判断だった。
+
+が、.NET Core 2.1での```IValueTaskSource```の登場を鑑みると、最早使える場面では```ValueTask, ValueTask<T>```が筋が良い選択に思える。
+
+### ```WhenAll / WhenAny / Lazy```が使えない問題
+```ValueTask```には、```WhenAll / WhenAny / Lazy``` 等のメソッドが存在していない。
+そのため```AsTask```を利用してのキャストが必要（インスタンス生成よりはペナルティは小さいもののゼロではない。）
+
+しかも、毎回```AsTask```を挟まないといけないので少々面倒。
+
+```Task``` => https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.tasks.task?view=net-5.0
+
+```ValueTask``` => https://docs.microsoft.com/ja-jp/dotnet/api/system.threading.tasks.valuetask?view=net-5.0
+
+#### ```ValueTaskSupplement``` を使うことで上記が利用可能になる
+https://www.nuget.org/packages/ValueTaskSupplement/

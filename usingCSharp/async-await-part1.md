@@ -126,7 +126,7 @@ https://docs.microsoft.com/ja-jp/dotnet/csharp/language-reference/keywords/async
 * スレッドプールの処理が完了済の場合は、後続の処理を流す。
 * スレッドプールの処理が未完了ならContinueWithで自分自身をコールバック登録（=スレッドプールに預けた処理が終わったら再帰呼び出し）
 * 再帰呼び出しの時、貼っておいたラベル位置までgoto
-といった処理を勝手に展開してくれる。（a.k.a. StateMachine）
+といった処理を勝手に展開してくれる。（```a.k.a. AsyncStateMachine```） ※ ```IteratorBlock```でコンパイラ生成される```IteratorStateMachine```と近しい仕組み
 
 つまり、async / awaitは、中を開けると、(Taskの場合）ContinueWithを利用して、I/O待ちの展開や、I/O待ち終了後の処理再開を制御するコードをキーワード一発で書ける仕組み。
 そして、TaskはThreadPoolを、便利に使う仕組み。
