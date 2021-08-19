@@ -171,3 +171,13 @@ C#ではasync Constructorは書くことができない。（そもそも構文�
 <b>(例):MailClientのWrapperを書く場合等であれば、MailServerへの接続や認証までをConstructorで行いたいけれど、これらは同期処理ではなく、I/O待ちで行いたい（ネットワーク越しの処理のため。）</b>
 
 その場合、staticなCreateAsyncを生やしてあげる必要がある。
+
+##Appendix:WebFormsでのasync / await の使い方
+* Pageディレクティブの Async 属性を "true" に設定する
+* RegisterAsyncTaskメソッドで、実行したい非同期タスクを登録する
+
+### ASP.NET WebFormsでの async / await 利用方法
+https://docs.microsoft.com/ja-jp/aspnet/web-forms/overview/performance-and-caching/using-asynchronous-methods-in-aspnet-45
+
+### ASP.NET WebFormsのライフサイクル
+https://docs.microsoft.com/en-us/previous-versions/aspnet/ms178472(v=vs.100)?redirectedfrom=MSDN
