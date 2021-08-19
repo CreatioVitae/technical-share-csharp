@@ -172,7 +172,7 @@ C#ではasync Constructorは書くことができない。（そもそも構文�
 
 その場合、staticなCreateAsyncを生やしてあげる必要がある。
 
-##Appendix:WebFormsでのasync / await の使い方
+## Appendix:WebFormsでのasync / await の使い方
 * Pageディレクティブの Async 属性を "true" に設定する
 * RegisterAsyncTaskメソッドで、実行したい非同期タスクを登録する
 
