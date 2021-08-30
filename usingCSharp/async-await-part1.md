@@ -25,6 +25,10 @@ async / await は I/O待ちの際に積極的に使うことでスレッドを�
 
 I/O待ちの処理では積極的にasync / awaitを利用すべし。
 
+### async / await での制約事項
+* out / ref 引数は利用できない
+* async メソッドの呼び出しは asyncメソッドから行いawaitを行う
+
 ## 非同期の種類
 * 同時実行(Concurrency)
 * 並列実行(parallelism)
@@ -171,3 +175,7 @@ C#ではasync Constructorは書くことができない。（そもそも構文�
 <b>(例):MailClientのWrapperを書く場合等であれば、MailServerへの接続や認証までをConstructorで行いたいけれど、これらは同期処理ではなく、I/O待ちで行いたい（ネットワーク越しの処理のため。）</b>
 
 その場合、staticなCreateAsyncを生やしてあげる必要がある。
+
+### async / await の制約事項
+* async / await では、out / ref 引数は利用できない => 多値戻り値が必要な場合は```ValueTuple```構造体を利用すること。
+* async メソッドの呼び出しは asyncメソッドから行いawaitを行う => awaitを書いて終了待ちが出来るのは```async Task or Task Like```メソッドのみのため。
