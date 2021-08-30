@@ -179,3 +179,13 @@ C#ではasync Constructorは書くことができない。（そもそも構文�
 ### async / await の制約事項
 * async / await では、out / ref 引数は利用できない => 多値戻り値が必要な場合は```ValueTuple```構造体を利用すること。
 * async メソッドの呼び出しは asyncメソッドから行いawaitを行う => awaitを書いて終了待ちが出来るのは```async Task or Task Like```メソッドのみのため。
+
+## Appendix:WebFormsでのasync / await の使い方
+* Pageディレクティブの Async 属性を "true" に設定する
+* RegisterAsyncTaskメソッドで、実行したい非同期タスクを登録する
+
+### ASP.NET WebFormsでの async / await 利用方法
+https://docs.microsoft.com/ja-jp/aspnet/web-forms/overview/performance-and-caching/using-asynchronous-methods-in-aspnet-45
+
+### ASP.NET WebFormsのライフサイクル
+https://docs.microsoft.com/en-us/previous-versions/aspnet/ms178472(v=vs.100)?redirectedfrom=MSDN

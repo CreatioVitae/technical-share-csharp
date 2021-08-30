@@ -124,3 +124,24 @@ Validation等の同期処理後、Early Return等がありうる場合 => ```Val
 
 #### ```ValueTaskSupplement``` を使うことで上記が利用可能になる
 https://www.nuget.org/packages/ValueTaskSupplement/
+
+## await using
+using を非同期で宣言可能になった。（C#8～）
+    
+using 宣言した変数のライフタイム終了時にDisposeAsyncが発火し、解体処理が行われる仕組み。
+
+```cs
+// https://github.com/CreatioVitae/ORMIntegrator/blob/main/src/ORMIntegrator/ScopedTransaction.cs#L27
+await using var scopedTransaction = await BbsScopedTransactionBuilder.BeginScopedTransactionAsync();
+```
+### using との違い
+```using```は```IDisposable``` インターフェースを実装していることで利用可能になる構文。
+    
+一方、```await using```は```IAsyncDisposable``` インターフェースを実装していなくても、```DisposeAsync```メソッドが```Member```にいれば利用可能。（いつものパターンベース実装）
+
+### ```IAsyncDisposable``` の存在意義
+DI Containerは通常、```IDisposable```インターフェースが実装されている場合、インスタンスのライフタイム終了後```Dispose```メソッドを発火してくれる。
+
+一方、（少なくともASP.NET Core 標準のDI Containerは）パターンベース実装には対応しておらず、```DisposeAsync```メソッドを記述しただけでは発火してくれない。
+
+あくまで、DI Container での利用を想定するのであれば```IAsyncDisposable```の実装が必要。
