@@ -159,13 +159,20 @@ var updateTargetIds = editParameters.Select(e => e.Id);
 
 //Use AsAsyncEnumerable...
 await foreach (var updateTarget in SqlManager.DbContext.Hoges.Where(e => updateTargetIds.Contains(e.Id)).AsAsyncEnumerable()) {
-    if (editParameters.SingleOrDefault(e => e.Id == updateTarget.Id) is not HogeEditParameter editParameter) {
-        throw new NullReferenceException($"更新対象が見つかりませんでした。{nameof(updateTarget.Id)}:{updateTarget.Id}");
-    }
-
-    SqlManager.DbContext.Hoges.Update(SetAndGetEntity(updateTarget, editParameter, DateTime.Now));
+    SqlManager.DbContext.Hoges.Update(
+        SetAndGetEntity(
+            updateTarget, 
+            editParameters.Single(e => e.Id == updateTarget.Id), 
+            DateTime.Now
+        )
+    );
 }
 ```
+
+### ```IAsyncEnumerable<T>```を戻り値にすることで、asynccメソッド内でもyield returnが可能になる
+https://sharplab.io/#v2:EYLgtghglgdgNAExAagD4AEAMACdBGAFgG4BYAKC1zwFZSzz0BmXAJmwGFsBvc7P3ZugAcuAGzYAsgEEAzgE8YAYwAUASm69+W9AE5sAMwD2AJwCmERQAtlANwjHslwwHNT2WNgDipgC4AJF1MZWQUVVVUeMi0tAHo4zWjsAF8tBOS0tKZcEQBJEKUAURgAVzBTYwhgABtTAB58TAA+L18A12D5JTUNKMTcPXRRADoAEVMqiDllPFU6Pqo8XAB2bAAiJ1dVub78RfQV1YAxYucILbTtPD2DgAUoOUMt+bSk8iSgA
+
+`yield return`が利用できるというメリットがある一方で、`Task<IEnumerable<T>>`ではなく、あくまで`IAsyncEnumerable<T>`を返す必要があるため、消費側は`await foreach`である必要がある。
 
 ### await using との関わり
 `foreach`では、`IDisposable`を実装している`Object`の場合、`using`ステートメント / 宣言を兼ねる。
