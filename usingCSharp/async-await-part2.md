@@ -169,7 +169,7 @@ await foreach (var updateTarget in SqlManager.DbContext.Hoges.Where(e => updateT
 }
 ```
 
-### ```IAsyncEnumerable<T>```を戻り値にすることで、asynccメソッド内でもyield returnが可能になる
+### ```IAsyncEnumerable<T>```を戻り値にすることで、asyncメソッド内でもyield returnが可能になる
 https://sharplab.io/#v2:EYLgtghglgdgNAExAagD4AEAMACdBGAFgG4BYAKC1zwFZSzz0BmXAJmwGFsBvc7P3ZugAcuAGzYAsgEEAzgE8YAYwAUASm69+W9AE5sAMwD2AJwCmERQAtlANwjHslwwHNT2WNgDipgC4AJF1MZWQUVVVUeMi0tAHo4zWjsAF8tBOS0tKZcEQBJEKUAURgAVzBTYwhgABtTAB58TAA+L18A12D5JTUNKMTcPXRRADoAEVMqiDllPFU6Pqo8XAB2bAAiJ1dVub78RfQV1YAxYucILbTtPD2DgAUoOUMt+bSk8iSgA
 
 `yield return`が利用できるというメリットがある一方で、`Task<IEnumerable<T>>`ではなく、あくまで`IAsyncEnumerable<T>`を返す必要があるため、消費側は`await foreach`である必要がある。
