@@ -61,3 +61,8 @@ GetMailProps
 > foreach (var item in hogeList) ;
 > 
 ```
+
+## foreachはusingを兼ねる
+https://sharplab.io/#v2:EYLgtghglgdgNAExAagD4AEBMBGAsAKHQAYACdbAFgG4CD0BmMzEgYRIG8CTuzH0KSAWQAUASg618PaSQBmAewBOAUwgBjABbCAbhEUkN8gObKSsEjGUB3EgAljysQDoA4soAu9kwGcxozlIy3AC+XDxhIQSh+HR8zF6mBAHSDGTY9AA85EQAfCRung6+ohESgUHk2GQA7ABEhia1NOUylTUktbIArkYQTaUp2FXodQAOUACe8k0kpcHSUZIEQA=
+
+`foreach`は、`IDisposable`を実装している場合、`using`ステートメント / 宣言を兼ねる形にコンパイラ生成される。
