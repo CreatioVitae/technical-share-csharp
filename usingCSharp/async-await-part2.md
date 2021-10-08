@@ -147,7 +147,7 @@ DI Containerは通常、```IDisposable```インターフェースが実装され
 あくまで、DI Container での利用を想定するのであれば```IAsyncDisposable```の実装が必要。
 
 ## 非同期ストリーム（C#8～）
-### `using IAsyncEnumerable<T>`を利用することで　`await using` が記述可能
+### `IAsyncEnumerable<T>`を利用することで　`await foreach` が記述可能
 
 ```
 static Hoge SetAndGetEntity(Hoge hoge, HogeEditParameter editParameter, DateTime requestedDatetime) {
