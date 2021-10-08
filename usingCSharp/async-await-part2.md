@@ -145,3 +145,28 @@ DI Containerは通常、```IDisposable```インターフェースが実装され
 一方、（少なくともASP.NET Core 標準のDI Containerは）パターンベース実装には対応しておらず、```DisposeAsync```メソッドを記述しただけでは発火してくれない。
 
 あくまで、DI Container での利用を想定するのであれば```IAsyncDisposable```の実装が必要。
+
+## 非同期ストリーム（C#8～）
+### `using IAsyncEnumerable<T>`を利用することで　`await using` が記述可能
+
+```
+static Hoge SetAndGetEntity(Hoge hoge, HogeEditParameter editParameter, DateTime requestedDatetime) {
+    (hoge.Name, hoge.DatetimeUpd) = (editParameter.Name, requestedDatetime);
+    return hoge;
+}
+
+var updateTargetIds = editParameters.Select(e => e.Id);
+
+//Use AsAsyncEnumerable...
+await foreach (var updateTarget in SqlManager.DbContext.Hoges.Where(e => updateTargetIds.Contains(e.Id)).AsAsyncEnumerable()) {
+    if (editParameters.SingleOrDefault(e => e.Id == updateTarget.Id) is not HogeEditParameter editParameter) {
+        throw new NullReferenceException($"更新対象が見つかりませんでした。{nameof(updateTarget.Id)}:{updateTarget.Id}");
+    }
+
+    SqlManager.DbContext.Hoges.Update(SetAndGetEntity(updateTarget, editParameter, DateTime.Now));
+}
+```
+
+### await using との関わり
+`foreach`では、`IDisposable`を実装している`Object`の場合、`using`ステートメント / 宣言を兼ねる。
+`await foreach`の場合も同様にusingを兼ねる仕様のため、同じタイミングで`await using`が実装された。
