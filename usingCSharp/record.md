@@ -133,3 +133,44 @@ public record Hoge(string Fuga, string Piyo) {
     public string? HogeFuga { get; set; }
 }
 ```
+
+## with 式について
+`record`型では`with`式が使える。
+
+### with 式 is 何
+部分書き換えを行いたいケースで利用。  
+但し、`record`型の`way`は`immutable`なので、with式では、データをクローンした上で書き換えるという挙動をする。
+
+### code例
+```
+var hoge = new Hoge(1, "hoge");
+
+var fuga = hoge with { name = "fuga" };
+```
+
+withキーワードがクローンを。カーリブラケットの中がpropへの書き換えを表す。  
+パターンマッチングに慣れ親しんだ人なら気付くと思うが、
+```
+var hoge = new Hoge(1, "hoge");
+
+var fuga = hoge with { };
+```
+もコンパイルエラーにならず、`fuga`は`hoge`の完全クローンを生成する。  
+= 別のinstanceなのでreference equalはfalseになることに注意。  
+……といってもrecordを利用している時点でmemberwise equalで検査をする想定のはずなので、問題にはならないはず。
+
+### 値の書き換えの是非について
+`immutable`であることが推奨されるのは、コードの複雑度を下げるため。
+
+#### 例
+`Hoge`に対して転居情報を`Sync`しようとした場合、`Prop`が書き換え可能な状態だと、「転居情報を`Sync`したかどうか」がわからない。
+
+```
+var hoge = new Hoge(1, "hoge", "東京都");
+
+var relocation = new Relocation(new DateTime(2022, 1, 1, 10, 0, 0), "神奈川県");
+
+var movedHoge = hoge with { Address = relocation.Address };
+```
+
+上記コードの場合、`movedHoge`を作成することで、転居情報を`sync`した`Hoge`であることを表現したほうが望ましい。
