@@ -156,8 +156,8 @@ var hoge = new Hoge(1, "hoge");
 var fuga = hoge with { };
 ```
 もコンパイルエラーにならず、`fuga`は`hoge`の完全クローンを生成する。  
-= 別のinstanceなのでreference equalはfalseになることに注意。  
-……といってもrecordを利用している時点でmemberwise equalで検査をする想定のはずなので、問題にはならないはず。
+= 別の`Instance`なので`Reference Equal`は`false`になることに注意。  
+……といっても`record`型を利用している時点で`Memberwise Equal`で検査をする想定のはずなので、問題にはならないはず。
 
 ### 値の書き換えの是非について
 `immutable`であることが推奨されるのは、コードの複雑度を下げるため。
