@@ -1,4 +1,4 @@
-# WIP:delegate
+# delegate
 ## TL;DR
 * delegateは、メソッドを参照するための型を表す。
 * a.k.a. 関数ポインターみたいなやつ（みたいなやつ）
