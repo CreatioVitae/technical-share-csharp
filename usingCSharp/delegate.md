@@ -57,3 +57,50 @@ a(256); // デリゲートを経由してメソッド[ FuncTest ]を呼び出し
 にて、`a`を経由して、`FuncTest`を`int`の`in parameter` 256を渡して `呼び出す`
 
 https://sharplab.io/#v2:EYLgtghglgdgNAExAagD4AEBMBGAsAKAIHoiACAEQFMAbSgcwgBdLSAVATwAdKCEb6mLdABYK/BswASAezqUAFLEakIASgDcBAksoAnGBGqksY2hMqtKAZ0YEA3gVJPj2AGzHRAWXmrHzh/jOQaQkpgLMbFyUgHYMgJCagA6mgNYMYJSMABbSCIBJDIDHcoCmioBADH7BYeYyciqkALykMJQA7qWC5QroAKyWNhpagSUq8phtrhohZIDjDIBXDIBNDIA/DIATDFmAMr6AjK6A6gyAZgyAhwyAvQyAwwyAkwwA2sYd1soAulmAPiqAzgyAX4qrPX1NUrIswNUnnYzqo7UNL0oLXk7W+qlIgAsGQAAcoAl32KwWAAyG3V6TgAvk9nOg3B4vmdFDBlDBfKjSAFntiAJzyAAkACIAMaGIwAOjZZIMKWkADMQacumj5HYYGjVHSUUEMfg0UA=
+
+### 匿名メソッド式(C#2～)
+delegateを使う場合、
+* メソッドの定義をする
+* 定義したメソッドを参照する
+
+という準備が必須だった。
+
+#### メソッドの定義の煩わしさ
+メソッドの定義 / 参照をせずにインスタントに書きたい欲求から生まれたのが匿名メソッドにあたる。  
+コンパイラ生成を見てみるとわかるが、`Action / func`を生成する。  
+現在の`C#`では`匿名メソッド式`ではなく、`ラムダ式`を利用するが、`メソッドの定義を作らない / メソッドの参照に伴うdeligate 型を定義しない（Action / funcを利用する）`というポイントは匿名メソッド式のタイミングでインストールされた。
+
+https://sharplab.io/#v2:EYLgtghglgdgNAExAagD4AEBMBGAsAKAIHoiACAEQFMAbSgcwgBdLSAVATwAdKCEb6mLdABYK/BswASAezqUAFLEakIASgDcBAksoAnGBGqksY2hMqtKAZ0YEA3gVJPj2AGzHRAWXmrHzh/jOQaQkpgLMbFyUgHYMgJCagA6mgNYMYJSMABbSCIBJDIDHcoCmioBADH7BYeYyciqkALykMJQA7qWC5QroAKyWNhpagSUq8phtrhohZIDjDIBXDIBNDIA/DIATDFmAMr6AjK6A6gyAZgyAhwyAvQyAwwyAkwwA2sYd1soAulmAPiqAzgyAX4qrPX1NUrIswNUnnYzqo7UNL0oLXk7W+qlIgAsGQAAcoAl32KzyC8KCwAGQ26vRKSOcADcILpSABjT58MyCRQwZQwcF2FwATnkABIAEQEwxGAB0nNIdgMKWkADMQacugBfeQ8kWqJkjEWaDHBLFOAmo4ZyoIip7OdBuDxfM7kym+eUBZ7a+nM1nUDlcnkQPmC0FnVRiiVS9HqggioA
+
+### ラムダ式（C#3～）
+匿名メソッド式では
+```cs
+var c = delegate(int n) { Console.WriteLine($"call ... {nameof(FuncTest)}({n})"); };
+```
+
+と書いていたものを、
+
+```cs
+Action<int> action = (int n) =>  { Console.WriteLine($"call ... {nameof(FuncTest)}({n})"); };
+```
+
+と書けるようになった。
+
+尚、
+
+```cs
+Action<int> actionAlt = (int n) =>  Console.WriteLine($"call ... {nameof(FuncTest)}({n})");
+```
+
+とも書けるし、C#10以降では
+
+```cs
+var actionAltCS10 = void (int n) =>  Console.WriteLine($"call ... {nameof(FuncTest)}({n})");
+```
+
+とも書けるが、コンパイラ生成後のコードはいずれも同じコードに展開される。
+
+#### ラムダ式 is 何
+ラムダ式は匿名メソッド式と同じく、`メソッドの定義を作らない / メソッドの参照に伴うdeligate 型を定義しない（Action / funcを利用する）` 使い捨ての関数をインスタントに定義するための仕組みにあたる。 ※ ラムダ式は`Expression Tree`の生成にも利用するが、`delegate`のdocが大きくなりすぎるため、詳細はラムダ式に関するdocにて解説する。
+
+https://sharplab.io/#v2:EYLgtghglgdgNAExAagD4AEBMBGAsAKAIHoiACAEQFMAbSgcwgBdLSAVATwAdKCEb6mLdABYK/BswASAezqUAFLEakIASgDcBAksoAnGBGqksY2hMqtKAZ0YEA3gVJPj2AGzHRAWXmrHzh/jOQaQkpgLMbFyUgHYMgJCagA6mgNYMYJSMABbSCIBJDIDHcoCmioBADH7BYeYyciqkALykMJQA7qWC5QroAKyWNhpagSUq8phtrhohZIDjDIBXDIBNDIA/DIATDFmAMr6AjK6A6gyAZgyAhwyAvQyAwwyAkwwA2sYd1soAulmAPiqAzgyAX4qrPX1NUrIswNUnnYzqo7UNL0oLXk7W+qlIgAsGQAAcoAl32KzyC8KCwAGQ26vRKSOcADcILpSABjT58MyCRQwZQwcF2FwATnkABIAEQEwxGAB0nNIdgMKWkADMQacugBfeQ8kWqJkjEWaDHBLFOAmo4Zy56KlyYAA8SgAfCoCYwoNIYJ9yZTwVV9dy6YyWWzSJz2dzeZQBUKwWKJVKZWq+hr0NhtXqDUaTQBBajKGrm2qW62B+nM1nUDlcnkQPmC0FnVRemCS6V+zHyoK4/EQQ3GmCRxgAYQAytgAAyfESkWNU6oJ7BJ+2px3p13unOi8UFn3F0gip7OQPudujxid3zygLPRN2lNp50ZrMe3P5wvooIz/AioA
