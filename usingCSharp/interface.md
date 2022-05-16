@@ -35,4 +35,4 @@ Docs : https://docs.microsoft.com/ja-jp/dotnet/api/system.collections.generic.ie
 
 `ICollection<T>`, `IList<T>`, `List<T>`等は、`IEnumerable<T>`を実装しているため、これらのobjectは`IEnumerable<T>`を通る。
 
-## `object`への操作の制御
+## Wip: `object`への操作の制御
