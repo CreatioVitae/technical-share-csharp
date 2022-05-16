@@ -5,7 +5,7 @@
 ## interfaceの効能
 * 疎結合（`object`自身ではなく、`interface`への依存とする。）
 * 機能の保証（`object`の`member`定義の強制による。ポリモーフィズムも此処に類する。）
-* `object`への操作を制御を行う（`interface`を`adaptive`に利用しながら、`object`への操作への制約を付与する。）
+* `object`への操作制御（`interface`を`adaptive`に利用しながら、`object`への操作への制約を付与する。）
 
 ## Wip:疎結合（`object`自身ではなく、`interface`への依存とする。）
 
@@ -35,4 +35,4 @@ Docs : https://docs.microsoft.com/ja-jp/dotnet/api/system.collections.generic.ie
 
 `ICollection<T>`, `IList<T>`, `List<T>`等は、`IEnumerable<T>`を実装しているため、これらのobjectは`IEnumerable<T>`を通る。
 
-## Wip: `object`への操作の制御
+## Wip: `object`への操作制御
