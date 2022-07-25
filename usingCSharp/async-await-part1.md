@@ -30,9 +30,12 @@ I/O待ちの処理では積極的にasync / awaitを利用すべし。
 * async メソッドの呼び出しは asyncメソッドから行いawaitを行う
 
 ## 非同期の種類
-* 同時実行(Concurrency)
-* 並列実行(parallelism)
-* I/O待ち(I/O Completion)
+* 同時実行(Concurrency)  
+=> Share Cpu, Switch Thread  
+* 並列実行(parallelism)  
+=> Sharing processing On multiple CPUs  
+* I/O待ち(I/O Completion)  
+=> Communicate with the outside of the Cpu  
 
  **async / awaitの使いどころはI/O待ち** 
 
