@@ -151,14 +151,22 @@ async voidメソッドの処理が完了するまでにスレッドプールに�
 ※ async voidメソッド本体の処理が遅くて、スレッドプールに預けた非同期処理が高速に動作している時は発覚しない負債です。
 
 ##### (async returned)Task.Wait is bad;
-async メソッドの戻り値のTaskを```.Wait```してはいけない。
-=> デッドロックで死ぬため。
+async メソッドの戻り値のTaskを```.Wait```してはいけない。  
+=> UI/Web Context(.NET Framework版）において、SynchronizationContextを利用する制約上、デッドロックで死ぬ仕様であるため。  
+`ASP.NET Core / Console App`の場合、`SynchronizationContext`は利用しないため、即座にデッドロックは発生しないものの、.Resultや.Waitを利用した場合、`UI/Web Contextのthreadは解放されない`ため`threadの無駄遣い`が発生する。  
+threadpoolの枯渇もまたデッドロックを招くこととUIスレッドの解放が行われないことを併せて考えると、即時デッドロックが発生しないケースでも`原則 async / await`は`伝搬`することが`筋が良い`。
+
+〇Wait is Bad...
 ```
 var t = MailClient.SendAsync(new …省略);
 
 t.Wait();
 ```
 とした場合
+※ MailClient.SendAsyncは以下の通り、asyncメソッドであり、メソッド内でawaitを行う。
+
+https://github.com/CreatioVitae/BclExtensionPack/blob/master/src/BclExtensionPack.Mail/MailClient.cs#L25
+
 
 １．t.WaitでUIスレッドをロックする。
 
@@ -167,6 +175,29 @@ t.Wait();
 ３．ロックされたUIスレッドに制御を戻せず、デッドロックで処理継続不可能
 
 となる。
+
+また類似の現象として`.Result`も同様の注意が必要になる。  
+```
+static HttpClient HttpClient { get; } = new HttpClient();
+
+public ActionResult Index()
+{
+    _ = UseAwaitHttpClientAsAsync().Result;
+
+    return View();
+}
+
+async Task<byte[]> UseAwaitHttpClientAsAsync()
+{
+    var response = await HttpClient.GetAsync("https://hoge.com");
+
+    return await response.Content.ReadAsByteArrayAsync();
+}
+```
+
+上記のようなコードを.NET Framework 版のASP.NET で書いた場合、  
+`_ = UseAwaitHttpClientAsAsync().Result;`  
+のところでデッドロックが発生する。  
 
 <b>Taskは、await すべし。</b>
 
