@@ -2,13 +2,13 @@
 ## async Task Main
 ### CSharp 7.1 New Feature
 #### 非同期Main[ async Task Main ]が追加
-* static async Task<int> Main()
-* static async Task<int> Main(string[] args)
-* static async Task Main()
-* static async Task Main(string[] args)
+* `static async Task<int> Main()`
+* `static async Task<int> Main(string[] args)`
+* `static async Task Main()`
+* `static async Task Main(string[] args)`
 
 ### 非同期Mainの注意事項
-void Main / int Main が既にいる場合、async Task Mainはエントリーポイントとして扱われない。
+`void Main / int Main` が既にいる場合、`async Task Main`はエントリーポイントとして扱われない。
 
 ## async / awaitを利用してのI/O待ちの並列処理
 ```async / await``` は I/O待ちの並列実行は得意領域。
