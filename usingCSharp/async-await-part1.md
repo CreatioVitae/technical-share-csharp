@@ -10,7 +10,7 @@
 
 =>戻り値取れない、例外受け取れない。言わばイベントハンドラのasync化のためだけに用意されたものなので、関わらないようにすること。async voidではなく、必ずasync taskを使う。
 
-### asyncメソッドの戻り値として受け取ったTaskはWaitしない。
+### `async`メソッドの戻り値として受け取った`Task`は`.Wait/.Result`しない。
 
 =>`SynchronizationContext`が利用されている場合、デッドロックが発生する。`SynchronizationContext`が利用されていない場合でもI/O完了ポートへのコールバック投函を非同期で待てず、Threadの無駄使いに繋がる。
 
