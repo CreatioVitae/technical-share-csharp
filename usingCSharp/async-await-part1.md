@@ -12,7 +12,7 @@
 
 ### asyncメソッドの戻り値として受け取ったTaskはWaitしない。
 
-=>`SynchronizationContext`が利用されている場合、デッドロックが発生する。`SynchronizationContext`を利用していない場合でもI/O完了ポートへのコールバック投函を非同期で待てず、Threadの無駄使いに繋がるため、使わないこと。
+=>`SynchronizationContext`が利用されている場合、デッドロックが発生する。`SynchronizationContext`が利用されていない場合でもI/O完了ポートへのコールバック投函を非同期で待てず、Threadの無駄使いに繋がる。
 
 ### Constructorにはasyncがつけられない（非同期コンストラクターが欲しくても言語制約上作れない）
 
